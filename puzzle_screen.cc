@@ -6,7 +6,7 @@
 
 PuzzleScreen::PuzzleScreen() :
   gui_("gui.png", 3, 8, 8),
-  bg_("starfield.png", 256, 2048, 4),
+  bg_("starfield.png", 256, 2048, 8),
   text_("text.png")
 {
   rand_.seed(Util::random_seed());
@@ -78,11 +78,9 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     for (auto& bullet : bullets_) {
       if (powerup.touching(bullet, 2)) {
-        explosions_.emplace_back(powerup.x(), powerup.y());
-        audio.play_sample("explode.wav");
-
+        audio.play_sample("rotate.wav");
+        powerup.rotate();
         bullet.kill();
-        powerup.kill();
       }
     }
   }

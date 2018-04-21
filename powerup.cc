@@ -4,9 +4,7 @@
 
 #include "util.h"
 
-Powerup::Powerup() : Object(0, 0), sprites_("powerups.png", 4, 16, 16), vy_(-10) {
-  vy_ = 0.07;
-
+Powerup::Powerup() : Object(0, -8), sprites_("powerups.png", 4, 16, 16) {
   std::mt19937 rand;
   rand.seed(Util::random_seed());
 
@@ -36,4 +34,9 @@ bool Powerup::touching(const Object& o, double r) const {
   const double dx = o.x() - x_;
   const double dy = o.y() - y_;
   return dx * dx + dy * dy < (8 + r) * (8 + r);
+}
+
+void Powerup::rotate() {
+  const int n = static_cast<int>(type_);
+  if (n < 4) type_ = static_cast<Type>((n + 1) % 4);
 }

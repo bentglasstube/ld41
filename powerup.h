@@ -8,7 +8,7 @@
 class Powerup : public Object {
   public:
 
-    enum class Type { Right, Left, Up, Down, K, N, O, B };
+    enum class Type { Up, Right, Down, Left, K, N, O, B };
 
     Powerup();
 
@@ -19,6 +19,7 @@ class Powerup : public Object {
     inline Type type() const { return type_; };
     void kill();
     bool touching(const Object& o, double r) const;
+    void rotate();
 
   private:
 
