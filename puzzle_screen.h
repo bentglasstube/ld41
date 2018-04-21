@@ -6,6 +6,8 @@
 #include "spritemap.h"
 #include "text.h"
 
+#include "puzzle.h"
+
 class PuzzleScreen : public Screen {
   public:
     PuzzleScreen();
@@ -17,14 +19,10 @@ class PuzzleScreen : public Screen {
 
   private:
 
-    enum class Direction { Left, Right, Up, Down };
-
-    SpriteMap tiles_, gui_;
+    SpriteMap gui_;
+    Puzzle puzzle_;
     Text text_;
     int timer_;
-    bool solved_;
-    std::array<unsigned int, 16> pieces_;
 
     void reset();
-    void move(Direction direction);
 };
