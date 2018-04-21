@@ -6,7 +6,7 @@
 
 PuzzleScreen::PuzzleScreen() :
   gui_("gui.png", 3, 8, 8),
-  bg_("starfield.png", 256, 1920, 4),
+  bg_("starfield.png", 256, 2048, 4),
   text_("text.png")
 {
   rand_.seed(Util::random_seed());
