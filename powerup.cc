@@ -32,8 +32,8 @@ void Powerup::kill() {
   y_ = 999;
 }
 
-bool Powerup::touching(double x, double y) const {
+bool Powerup::touching(double x, double y, double r) const {
   const double dx = x - x_;
   const double dy = y - y_;
-  return dx * dx + dy * dy < 256;
+  return dx * dx + dy * dy < (8 + r) * (8 + r);
 }

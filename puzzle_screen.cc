@@ -22,6 +22,10 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
   if (input.key_held(Input::Button::Right)) ++t;
   player_.thrust(t);
 
+  if (input.key_pressed(Input::Button::A) && bullets_.size() < 3) {
+    bullets_.emplace_back(player_.x(), 200);
+  }
+
   player_.update(elapsed);
 
   std::uniform_real_distribution<double> p(0, 1);
@@ -29,10 +33,19 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
     powerups_.emplace_back();
   }
 
+  // TODO Consolidate these objects into one
+  for (auto& bullet : bullets_) {
+    bullet.update(elapsed);
+  }
+
+  for (auto& explosion : explosions_) {
+    explosion.update(elapsed);
+  }
+
   for (auto& powerup : powerups_) {
     powerup.update(elapsed);
 
-    if (powerup.touching(player_.x(), 208)) {
+    if (powerup.touching(player_.x(), 208, 4)) {
       powerup.kill();
 
       switch (powerup.type()) {
@@ -52,6 +65,18 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
           puzzle_.move(Puzzle::Direction::Up);
           break;
 
+        default:
+          // do nothing
+          break;
+      }
+    }
+
+    for (auto& bullet : bullets_) {
+      if (powerup.touching(bullet.x(), bullet.y(), 2)) {
+        explosions_.emplace_back(powerup.x(), powerup.y());
+
+        bullet.kill();
+        powerup.kill();
       }
     }
   }
@@ -60,6 +85,11 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
         powerups_.begin(), powerups_.end(),
         [](const Powerup& p){ return p.dead();}),
       powerups_.end());
+
+  bullets_.erase(std::remove_if(
+        bullets_.begin(), bullets_.end(),
+        [](const Bullet& b){ return b.dead();}),
+      bullets_.end());
 
   return true;
 }
@@ -70,6 +100,14 @@ void PuzzleScreen::draw(Graphics& graphics) const {
 
   for (const auto& powerup : powerups_) {
     powerup.draw(graphics);
+  }
+
+  for (const auto& bullet : bullets_) {
+    bullet.draw(graphics);
+  }
+
+  for (const auto& explosion: explosions_) {
+    explosion.draw(graphics);
   }
 
   const int s = (timer_ / 1000) % 60;

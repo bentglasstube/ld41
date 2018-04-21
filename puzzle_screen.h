@@ -8,6 +8,8 @@
 #include "spritemap.h"
 #include "text.h"
 
+#include "bullet.h"
+#include "explosion.h"
 #include "powerup.h"
 #include "puzzle.h"
 #include "ship.h"
@@ -30,6 +32,8 @@ class PuzzleScreen : public Screen {
     Puzzle puzzle_;
     Ship player_;
     std::vector<Powerup> powerups_;
+    std::vector<Bullet> bullets_;
+    std::vector<Explosion> explosions_;
 
     int timer_;
 
