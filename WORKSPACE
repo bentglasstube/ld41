@@ -1,7 +1,7 @@
 git_repository(
     name = "libgam",
     remote = "https://github.com/bentglasstube/gam.git",
-    tag = "v1.4"
+    tag = "v1.6"
 )
 
 git_repository(

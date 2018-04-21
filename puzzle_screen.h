@@ -7,6 +7,7 @@
 #include "text.h"
 
 #include "puzzle.h"
+#include "ship.h"
 
 class PuzzleScreen : public Screen {
   public:
@@ -21,6 +22,7 @@ class PuzzleScreen : public Screen {
 
     SpriteMap gui_;
     Puzzle puzzle_;
+    Ship player_;
     Text text_;
     int timer_;
 

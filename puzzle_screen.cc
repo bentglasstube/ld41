@@ -8,27 +8,23 @@ PuzzleScreen::PuzzleScreen() :
 }
 
 bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
-  if (input.key_pressed(Input::Button::A)) reset();
-
   if (!puzzle_.solved()) {
     timer_ += elapsed;
-
-    if (input.key_pressed(Input::Button::Right)) {
-      puzzle_.move(Puzzle::Direction::Left);
-    } else if (input.key_pressed(Input::Button::Left)) {
-      puzzle_.move(Puzzle::Direction::Right);
-    } else if (input.key_pressed(Input::Button::Up)) {
-      puzzle_.move(Puzzle::Direction::Down);
-    } else if (input.key_pressed(Input::Button::Down)) {
-      puzzle_.move(Puzzle::Direction::Up);
-    }
   }
+
+  int t = 0;
+  if (input.key_held(Input::Button::Left)) --t;
+  if (input.key_held(Input::Button::Right)) ++t;
+  player_.thrust(t);
+
+  player_.update(elapsed);
 
   return true;
 }
 
 void PuzzleScreen::draw(Graphics& graphics) const {
   puzzle_.draw(graphics, 188, 4);
+  player_.draw(graphics, 208);
 
   const int s = (timer_ / 1000) % 60;
   const int m = timer_ / 1000 / 60;
@@ -58,7 +54,6 @@ void PuzzleScreen::draw(Graphics& graphics) const {
 
   gui_.draw(graphics, 6, 184, 66);
   gui_.draw(graphics, 8, 248, 66);
-
 }
 
 Screen* PuzzleScreen::next_screen() const {

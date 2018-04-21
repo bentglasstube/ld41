@@ -64,9 +64,20 @@ cc_library(
     hdrs = ["puzzle_screen.h"],
     deps = [
         ":puzzle",
+        ":ship",
         "@libgam//:screen",
         "@libgam//:spritemap",
         "@libgam//:text",
+    ],
+)
+
+cc_library(
+    name = "ship",
+    srcs = ["ship.cc"],
+    hdrs = ["ship.h"],
+    deps = [
+        "@libgam//:graphics",
+        "@libgam//:spritemap",
     ],
 )
 
