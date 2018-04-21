@@ -28,6 +28,12 @@ void Powerup::draw(Graphics& graphics) const {
   sprites_.draw(graphics, static_cast<int>(type_), x_ - 8, y_ - 8);
 }
 
-bool Powerup::dead() const {
-  return y_ > 250;
+void Powerup::kill() {
+  y_ = 999;
+}
+
+bool Powerup::touching(double x, double y) const {
+  const double dx = x - x_;
+  const double dy = y - y_;
+  return dx * dx + dy * dy < 256;
 }

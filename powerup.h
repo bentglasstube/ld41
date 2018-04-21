@@ -11,8 +11,12 @@ class Powerup {
     Powerup();
     void update(unsigned int elapased);
     void draw(Graphics& graphics) const;
+    void kill();
 
-    bool dead() const;
+    bool touching(double x, double y) const;
+
+    inline bool dead() const { return y_ > 250; };
+    inline Type type() const { return type_; };
 
   private:
 

@@ -31,6 +31,29 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
 
   for (auto& powerup : powerups_) {
     powerup.update(elapsed);
+
+    if (powerup.touching(player_.x(), 208)) {
+      powerup.kill();
+
+      switch (powerup.type()) {
+        case Powerup::Type::Left:
+          puzzle_.move(Puzzle::Direction::Right);
+          break;
+
+        case Powerup::Type::Right:
+          puzzle_.move(Puzzle::Direction::Left);
+          break;
+
+        case Powerup::Type::Up:
+          puzzle_.move(Puzzle::Direction::Down);
+          break;
+
+        case Powerup::Type::Down:
+          puzzle_.move(Puzzle::Direction::Up);
+          break;
+
+      }
+    }
   }
 
   powerups_.erase(std::remove_if(

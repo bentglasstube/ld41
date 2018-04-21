@@ -19,5 +19,5 @@ void Ship::update(unsigned int elapsed) {
 
 void Ship::draw(Graphics& graphics, int y) const {
   const int n = vx_ < 0 ? 1 : vx_ > 0 ? 2 : 0;
-  sprites_.draw(graphics, n, x_ - 8, y);
+  sprites_.draw(graphics, n, x_ - 8, y - 8);
 }

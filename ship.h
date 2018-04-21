@@ -12,6 +12,8 @@ class Ship {
     void update(unsigned int elapsed);
     void draw(Graphics& graphics, int y) const;
 
+    double x() const { return x_; }
+
   private:
 
     SpriteMap sprites_;

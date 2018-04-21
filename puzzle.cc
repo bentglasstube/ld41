@@ -25,6 +25,8 @@ void Puzzle::shuffle() {
 }
 
 bool Puzzle::move(Puzzle::Direction dir) {
+  if (solved()) return false;
+
   int empty = 0;
 
   for (size_t i = 0; i < 16; ++ i) {
