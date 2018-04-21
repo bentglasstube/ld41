@@ -1,6 +1,8 @@
 #include "puzzle_screen.h"
 
 #include <algorithm>
+#include <iomanip>
+#include <sstream>
 
 #include "util.h"
 
@@ -125,10 +127,14 @@ void PuzzleScreen::draw(Graphics& graphics) const {
 
   puzzle_.draw(graphics, 188, 4);
 
-  // TODO use fancy new string nonsense
-  char buffer[24];
-  sprintf(buffer, "%u:%02u", m, s);
-  text_.draw(graphics, buffer, 252, 71, Text::Alignment::Right);
+  std::ostringstream timer;
+  timer << m << ":" << std::setw(2) << std::setfill('0') << s;
+  text_.draw(graphics, timer.str(), 252, 71, Text::Alignment::Right);
+
+  const int wt = player_.weapon_timer();
+  if (wt > 0) {
+    text_.draw(graphics, std::to_string(wt), 85, 224, Text::Alignment::Center);
+  }
 
   gui_.draw(graphics, 0, 184, 0);
   gui_.draw(graphics, 2, 248, 0);

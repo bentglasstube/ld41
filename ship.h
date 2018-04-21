@@ -2,6 +2,8 @@
 
 #include "object.h"
 
+#include <cmath>
+
 #include "graphics.h"
 #include "spritemap.h"
 
@@ -19,7 +21,7 @@ class Ship : public Object {
     void update(unsigned int elapsed) override;
     void draw(Graphics& graphics) const override;
     inline bool dead() const override { return false; };
-    inline int weapon_timer() const { return weapon_timer_ / 1000; };
+    inline int weapon_timer() const { return std::ceil(weapon_timer_ / 1000); };
 
   private:
 
