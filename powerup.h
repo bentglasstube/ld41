@@ -18,7 +18,6 @@ class Powerup : public Object {
 
     inline Type type() const { return type_; };
     void kill();
-    bool touching(const Object& o, double r) const;
     void rotate();
 
   private:

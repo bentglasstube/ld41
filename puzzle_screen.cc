@@ -49,7 +49,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
   for (auto& powerup : powerups_) {
     powerup.update(elapsed);
 
-    if (powerup.touching(player_, 4)) {
+    if (collision(powerup, player_, 12)) {
       powerup.kill();
       audio.play_sample("powerup.wav");
 
@@ -77,7 +77,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     }
 
     for (auto& bullet : bullets_) {
-      if (powerup.touching(bullet, 2)) {
+      if (collision(bullet, powerup, 10)) {
         audio.play_sample("rotate.wav");
         powerup.rotate();
         bullet.kill();
@@ -153,4 +153,10 @@ Screen* PuzzleScreen::next_screen() const {
 void PuzzleScreen::reset() {
   timer_ = 0;
   puzzle_.shuffle();
+}
+
+bool PuzzleScreen::collision(const Object& a, const Object& b, double r) const {
+  const double dx = a.x() - b.x();
+  const double dy = a.y() - b.y();
+  return dx * dx + dy * dy < r * r;
 }

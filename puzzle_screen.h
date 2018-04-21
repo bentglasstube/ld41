@@ -40,4 +40,5 @@ class PuzzleScreen : public Screen {
     int timer_;
 
     void reset();
+    bool collision(const Object& a, const Object& b, double r) const;
 };

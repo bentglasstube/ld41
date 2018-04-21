@@ -30,12 +30,6 @@ void Powerup::kill() {
   y_ = 999;
 }
 
-bool Powerup::touching(const Object& o, double r) const {
-  const double dx = o.x() - x_;
-  const double dy = o.y() - y_;
-  return dx * dx + dy * dy < (8 + r) * (8 + r);
-}
-
 void Powerup::rotate() {
   const int n = static_cast<int>(type_);
   if (n < 4) type_ = static_cast<Type>((n + 1) % 4);
