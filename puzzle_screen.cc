@@ -18,10 +18,12 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     timer_ += elapsed;
   }
 
-  int t = 0;
-  if (input.key_held(Input::Button::Left)) --t;
-  if (input.key_held(Input::Button::Right)) ++t;
-  player_.thrust(t);
+  int tx = 0, ty = 0;
+  if (input.key_held(Input::Button::Left)) --tx;
+  if (input.key_held(Input::Button::Right)) ++tx;
+  if (input.key_held(Input::Button::Up)) --ty;
+  if (input.key_held(Input::Button::Down)) ++ty;
+  player_.thrust(tx, ty);
 
   if (input.key_pressed(Input::Button::A) && bullets_.size() < 3) {
     bullets_.emplace_back(player_.x(), player_.y() - 4);
