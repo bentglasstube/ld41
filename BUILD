@@ -48,6 +48,17 @@ pkg_tar(
 )
 
 cc_library(
+    name = "powerup",
+    srcs = ["powerup.cc"],
+    hdrs = ["powerup.h"],
+    deps = [
+        "@libgam//:graphics",
+        "@libgam//:spritemap",
+        "@libgam//:util",
+    ],
+)
+
+cc_library(
     name = "puzzle",
     srcs = ["puzzle.cc"],
     hdrs = ["puzzle.h"],
@@ -63,6 +74,7 @@ cc_library(
     srcs = ["puzzle_screen.cc"],
     hdrs = ["puzzle_screen.h"],
     deps = [
+        ":powerup",
         ":puzzle",
         ":ship",
         "@libgam//:screen",

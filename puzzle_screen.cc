@@ -1,9 +1,14 @@
 #include "puzzle_screen.h"
 
+#include <algorithm>
+
+#include "util.h"
+
 PuzzleScreen::PuzzleScreen() :
   gui_("gui.png", 3, 8, 8),
   text_("text.png")
 {
+  rand_.seed(Util::random_seed());
   reset();
 }
 
@@ -19,6 +24,20 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
 
   player_.update(elapsed);
 
+  std::uniform_real_distribution<double> p(0, 1);
+  if (p(rand_) < 0.01) {
+    powerups_.emplace_back();
+  }
+
+  for (auto& powerup : powerups_) {
+    powerup.update(elapsed);
+  }
+
+  powerups_.erase(std::remove_if(
+        powerups_.begin(), powerups_.end(),
+        [](const Powerup& p){ return p.dead();}),
+      powerups_.end());
+
   return true;
 }
 
@@ -26,9 +45,14 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   puzzle_.draw(graphics, 188, 4);
   player_.draw(graphics, 208);
 
+  for (const auto& powerup : powerups_) {
+    powerup.draw(graphics);
+  }
+
   const int s = (timer_ / 1000) % 60;
   const int m = timer_ / 1000 / 60;
 
+  // TODO use fancy new string nonsense
   char buffer[24];
   sprintf(buffer, "%u:%02u", m, s);
 

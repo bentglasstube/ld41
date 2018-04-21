@@ -1,11 +1,14 @@
 #pragma once
 
 #include <array>
+#include <random>
+#include <vector>
 
 #include "screen.h"
 #include "spritemap.h"
 #include "text.h"
 
+#include "powerup.h"
 #include "puzzle.h"
 #include "ship.h"
 
@@ -21,9 +24,13 @@ class PuzzleScreen : public Screen {
   private:
 
     SpriteMap gui_;
+    Text text_;
+    std::mt19937 rand_;
+
     Puzzle puzzle_;
     Ship player_;
-    Text text_;
+    std::vector<Powerup> powerups_;
+
     int timer_;
 
     void reset();
