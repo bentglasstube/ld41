@@ -26,7 +26,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
   player_.thrust(tx, ty);
 
   if (input.key_pressed(Input::Button::A) && bullets_.size() < 3) {
-    Object* b = player_.fire();
+    Bullet* b = player_.fire();
     if (b) {
       bullets_.push_back(std::move(b));
       audio.play_sample("bullet.wav");
@@ -84,7 +84,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     for (auto& bullet : bullets_) {
       if (collision(*bullet, powerup, 10)) {
-        if (powerup.rotate()) audio.play_sample("rotate.wav");
+        if (bullet->type() == Bullet::Type::Laser && powerup.rotate()) audio.play_sample("rotate.wav");
         bullet->kill();
       }
     }
@@ -97,7 +97,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
   bullets_.erase(std::remove_if(
         bullets_.begin(), bullets_.end(),
-        [](const Object* const b){ return b->dead();}),
+        [](const Bullet* const b){ return b->dead();}),
       bullets_.end());
 
   return true;

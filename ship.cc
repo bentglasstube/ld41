@@ -15,7 +15,7 @@ void Ship::weapon(Bullet::Type weapon) {
   weapon_ = weapon;
 }
 
-Object* Ship::fire() const {
+Bullet* Ship::fire() const {
   return std::move(new Bullet(x_, y_ - 4, weapon_));
 }
 

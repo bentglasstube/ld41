@@ -18,6 +18,7 @@ class Bullet : public Object {
 
     inline bool dead() const { return y_ < 0; };
     inline void kill() { y_ = -999; };
+    inline Type type() const { return type_; };
 
   private:
 

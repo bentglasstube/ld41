@@ -14,7 +14,7 @@ class Ship : public Object {
 
     void thrust(double vx, double vy = 0);
     void weapon(Bullet::Type weapon);
-    Object* fire() const;
+    Bullet* fire() const;
 
     void update(unsigned int elapsed) override;
     void draw(Graphics& graphics) const override;
