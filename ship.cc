@@ -4,7 +4,10 @@
 
 #include "bullet.h"
 
-Ship::Ship() : Object(92, 224), sprites_("ships.png", 4, 16, 16) {}
+Ship::Ship() :
+  Object(92, 224),
+  sprites_("ships.png", 4, 16, 16),
+  weapon_(Bullet::Type::Bullet), weapon_timer_(0) {}
 
 void Ship::thrust(double vx, double vy) {
   vx_ = vx;
@@ -13,6 +16,7 @@ void Ship::thrust(double vx, double vy) {
 
 void Ship::weapon(Bullet::Type weapon) {
   weapon_ = weapon;
+  weapon_timer_ = 10000;
 }
 
 Bullet* Ship::fire() const {
@@ -22,6 +26,13 @@ Bullet* Ship::fire() const {
 void Ship::update(unsigned int elapsed) {
   x_ = Util::clamp(x_ + elapsed * vx_ * kSpeed, 8.0, 176.0);
   y_ = Util::clamp(y_ + elapsed * vy_ * kSpeed, 8.0, 232.0);
+
+  weapon_timer_ -= elapsed;
+
+  if (weapon_timer_ < 0) {
+    weapon_ = Bullet::Type::Bullet;
+    weapon_timer_ = 0;
+  }
 }
 
 void Ship::draw(Graphics& graphics) const {

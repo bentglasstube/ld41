@@ -3,9 +3,9 @@
 Bullet::Bullet(double x, double y, Bullet::Type type) :
   Object(x, y),
   sprites_("ships.png", 4, 16, 16),
-  type_(type)
+  type_(type), timer_(0)
 {
-  vy_ = kSpeedForType.at(type);
+  vy_ = kSpeed.at(type);
 }
 
 void Bullet::update(unsigned int elapsed) {
@@ -30,8 +30,13 @@ int Bullet::sprite_index() const {
   }
 }
 
-const std::unordered_map<Bullet::Type, double> Bullet::kSpeedForType = {
+const std::unordered_map<Bullet::Type, double> Bullet::kSpeed = {
   { Type::Bullet, -0.2 },
   { Type::Laser, -0.35 },
+};
+
+const std::unordered_map<Bullet::Type, std::string> Bullet::kSample = {
+  { Type::Bullet, "bullet.wav" },
+  { Type::Laser, "laser.wav" },
 };
 

@@ -19,6 +19,7 @@ class Bullet : public Object {
     inline bool dead() const { return y_ < 0; };
     inline void kill() { y_ = -999; };
     inline Type type() const { return type_; };
+    inline std::string audio_sample() const { return kSample.at(type_); };
 
   private:
 
@@ -29,5 +30,6 @@ class Bullet : public Object {
 
     int sprite_index() const;
 
-    static const std::unordered_map<Type, double> kSpeedForType;
+    static const std::unordered_map<Type, double> kSpeed;
+    static const std::unordered_map<Type, std::string> kSample;
 };

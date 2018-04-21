@@ -29,7 +29,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     Bullet* b = player_.fire();
     if (b) {
       bullets_.push_back(std::move(b));
-      audio.play_sample("bullet.wav");
+      audio.play_sample(b->audio_sample());
     }
   }
 
@@ -54,27 +54,27 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     if (collision(powerup, player_, 12)) {
       powerup.kill();
-      audio.play_sample("powerup.wav");
 
       switch (powerup.type()) {
         case Powerup::Type::Left:
-          puzzle_.move(Puzzle::Direction::Right);
+          if (puzzle_.move(Puzzle::Direction::Right)) audio.play_sample("slide.wav");
           break;
 
         case Powerup::Type::Right:
-          puzzle_.move(Puzzle::Direction::Left);
+          if (puzzle_.move(Puzzle::Direction::Left)) audio.play_sample("slide.wav");
           break;
 
         case Powerup::Type::Up:
-          puzzle_.move(Puzzle::Direction::Down);
+          if (puzzle_.move(Puzzle::Direction::Down)) audio.play_sample("slide.wav");
           break;
 
         case Powerup::Type::Down:
-          puzzle_.move(Puzzle::Direction::Up);
+          if (puzzle_.move(Puzzle::Direction::Up)) audio.play_sample("slide.wav");
           break;
 
         case Powerup::Type::K:
           player_.weapon(Bullet::Type::Laser);
+          audio.play_sample("powerup.wav");
           break;
 
         default:
