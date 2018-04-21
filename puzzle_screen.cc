@@ -26,8 +26,11 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
   player_.thrust(tx, ty);
 
   if (input.key_pressed(Input::Button::A) && bullets_.size() < 3) {
-    bullets_.emplace_back(player_.x(), player_.y() - 4);
-    audio.play_sample("bullet.wav");
+    Object* b = player_.fire();
+    if (b) {
+      bullets_.push_back(std::move(b));
+      audio.play_sample("bullet.wav");
+    }
   }
 
   player_.update(elapsed);
@@ -39,7 +42,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
   // TODO Consolidate these objects into one
   for (auto& bullet : bullets_) {
-    bullet.update(elapsed);
+    bullet->update(elapsed);
   }
 
   for (auto& explosion : explosions_) {
@@ -70,17 +73,19 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
           puzzle_.move(Puzzle::Direction::Up);
           break;
 
+        case Powerup::Type::K:
+          player_.weapon(Bullet::Type::Laser);
+          break;
+
         default:
-          // do nothing
           break;
       }
     }
 
     for (auto& bullet : bullets_) {
-      if (collision(bullet, powerup, 10)) {
-        audio.play_sample("rotate.wav");
-        powerup.rotate();
-        bullet.kill();
+      if (collision(*bullet, powerup, 10)) {
+        if (powerup.rotate()) audio.play_sample("rotate.wav");
+        bullet->kill();
       }
     }
   }
@@ -92,7 +97,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
   bullets_.erase(std::remove_if(
         bullets_.begin(), bullets_.end(),
-        [](const Bullet& b){ return b.dead();}),
+        [](const Object* const b){ return b->dead();}),
       bullets_.end());
 
   return true;
@@ -106,7 +111,7 @@ void PuzzleScreen::draw(Graphics& graphics) const {
     powerup.draw(graphics);
   }
   for (const auto& bullet : bullets_) {
-    bullet.draw(graphics);
+    bullet->draw(graphics);
   }
   for (const auto& explosion: explosions_) {
     explosion.draw(graphics);

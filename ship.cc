@@ -2,11 +2,21 @@
 
 #include "util.h"
 
+#include "bullet.h"
+
 Ship::Ship() : Object(92, 224), sprites_("ships.png", 4, 16, 16) {}
 
 void Ship::thrust(double vx, double vy) {
   vx_ = vx;
   vy_ = vy;
+}
+
+void Ship::weapon(Bullet::Type weapon) {
+  weapon_ = weapon;
+}
+
+Object* Ship::fire() const {
+  return std::move(new Bullet(x_, y_ - 4, weapon_));
 }
 
 void Ship::update(unsigned int elapsed) {

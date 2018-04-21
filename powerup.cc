@@ -14,7 +14,7 @@ Powerup::Powerup() : Object(0, -8), sprites_("powerups.png", 4, 16, 16) {
   std::uniform_real_distribution<double> vydist(0.04, 0.09);
   vy_ = vydist(rand);
 
-  std::uniform_int_distribution<int> tdist(0, 3);
+  std::uniform_int_distribution<int> tdist(0, 4);
   type_ = static_cast<Type>(tdist(rand));
 }
 
@@ -30,7 +30,12 @@ void Powerup::kill() {
   y_ = 999;
 }
 
-void Powerup::rotate() {
+bool Powerup::rotate() {
   const int n = static_cast<int>(type_);
-  if (n < 4) type_ = static_cast<Type>((n + 1) % 4);
+  if (n < 4) {
+    type_ = static_cast<Type>((n + 1) % 4);
+    return true;
+  } else {
+    return false;
+  }
 }

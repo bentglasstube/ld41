@@ -9,6 +9,7 @@ class Object {
     virtual void update(unsigned int elapsed) = 0;
     virtual void draw(Graphics& graphics) const = 0;
     virtual bool dead() const = 0;
+    virtual void kill() {};
 
     inline double x() const { return x_; }
     inline double y() const { return y_; }

@@ -18,7 +18,7 @@ class Powerup : public Object {
 
     inline Type type() const { return type_; };
     void kill();
-    void rotate();
+    bool rotate();
 
   private:
 

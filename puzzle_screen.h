@@ -34,7 +34,7 @@ class PuzzleScreen : public Screen {
     Puzzle puzzle_;
     Ship player_;
     std::vector<Powerup> powerups_;
-    std::vector<Bullet> bullets_;
+    std::vector<Object*> bullets_;
     std::vector<Explosion> explosions_;
 
     int timer_;
