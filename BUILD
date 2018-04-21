@@ -48,10 +48,23 @@ pkg_tar(
 )
 
 cc_library(
+    name = "puzzle_screen",
+    srcs = ["puzzle_screen.cc"],
+    hdrs = ["puzzle_screen.h"],
+    deps = [
+        "@libgam//:screen",
+        "@libgam//:spritemap",
+        "@libgam//:text",
+        "@libgam//:util",
+    ],
+)
+
+cc_library(
     name = "title_screen",
     srcs = ["title_screen.cc"],
     hdrs = ["title_screen.h"],
     deps = [
+        ":puzzle_screen",
         "@libgam//:screen",
         "@libgam//:text",
     ],

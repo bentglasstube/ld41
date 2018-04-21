@@ -1,5 +1,7 @@
 #include "title_screen.h"
 
+#include "puzzle_screen.h"
+
 TitleScreen::TitleScreen() : text_("text.png"), timer_(0) {}
 
 bool TitleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
@@ -12,5 +14,5 @@ void TitleScreen::draw(Graphics& graphics) const {
 }
 
 Screen* TitleScreen::next_screen() const {
-  return nullptr;
+  return new PuzzleScreen();
 }
