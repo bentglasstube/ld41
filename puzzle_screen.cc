@@ -101,35 +101,32 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 void PuzzleScreen::draw(Graphics& graphics) const {
   bg_.draw(graphics, 0, -timer_);
 
-  puzzle_.draw(graphics, 188, 4);
   player_.draw(graphics);
-
   for (const auto& powerup : powerups_) {
     powerup.draw(graphics);
   }
-
   for (const auto& bullet : bullets_) {
     bullet.draw(graphics);
   }
-
   for (const auto& explosion: explosions_) {
     explosion.draw(graphics);
   }
 
-  // TODO black out region
+  SDL_Rect r = { 184, 0, 72, 240 };
+  graphics.draw_rect(&r, 0x000000ff, true);
 
   const int s = (timer_ / 1000) % 60;
   const int m = timer_ / 1000 / 60;
 
+  puzzle_.draw(graphics, 188, 4);
+
   // TODO use fancy new string nonsense
   char buffer[24];
   sprintf(buffer, "%u:%02u", m, s);
-
   text_.draw(graphics, buffer, 252, 71, Text::Alignment::Right);
 
   gui_.draw(graphics, 0, 184, 0);
   gui_.draw(graphics, 2, 248, 0);
-
   gui_.draw(graphics, 9, 184, 82);
   gui_.draw(graphics, 11, 248, 82);
 
