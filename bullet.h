@@ -1,11 +1,12 @@
 #pragma once
 
+#include "object.h"
+
 #include "graphics.h"
 #include "spritemap.h"
 
-class Bullet {
+class Bullet : public Object {
   public:
-
     Bullet(double x, double y);
 
     void update(unsigned int elapsed);
@@ -14,11 +15,8 @@ class Bullet {
     inline bool dead() const { return y_ < 0; };
     inline void kill() { y_ = -999; };
 
-    inline double x() const { return x_; }
-    inline double y() const { return y_; }
-
   private:
 
     SpriteMap sprites_;
-    double x_, y_, vy_;
+    double vy_;
 };

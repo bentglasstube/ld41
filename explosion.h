@@ -1,9 +1,11 @@
 #pragma once
 
+#include "object.h"
+
 #include "graphics.h"
 #include "spritemap.h"
 
-class Explosion {
+class Explosion : public Object {
   public:
 
     Explosion(double x, double y);
@@ -16,7 +18,6 @@ class Explosion {
   private:
 
     SpriteMap sprites_;
-    double x_, y_;
     int timer_;
 
     static constexpr int kFrameTime = 200;

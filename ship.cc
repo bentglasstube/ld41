@@ -1,23 +1,20 @@
 #include "ship.h"
 
-Ship::Ship() : sprites_("ships.png", 4, 16, 16), x_(92.0), vx_(0.0) {}
+#include "util.h"
 
-void Ship::thrust(double v) {
-  vx_ = v;
+Ship::Ship() : Object(92, 224), sprites_("ships.png", 4, 16, 16) {}
+
+void Ship::thrust(double vx, double vy) {
+  vx_ = vx;
+  vy_ = vy;
 }
 
 void Ship::update(unsigned int elapsed) {
-  x_ += elapsed * vx_ * kSpeed;
-  if (x_ < 8) {
-    x_ = 8;
-    vx_ = 0;
-  } else if (x_ > 176) {
-    x_ = 176;
-    vx_ = 0;
-  }
+  x_ = Util::clamp(x_ + elapsed * vx_ * kSpeed, 8.0, 176.0);
+  y_ = Util::clamp(y_ + elapsed * vy_ * kSpeed, 8.0, 232.0);
 }
 
-void Ship::draw(Graphics& graphics, int y) const {
+void Ship::draw(Graphics& graphics) const {
   const int n = vx_ < 0 ? 1 : vx_ > 0 ? 2 : 0;
-  sprites_.draw(graphics, n, x_ - 8, y - 8);
+  sprites_.draw(graphics, n, x_ - 8, y_ - 8);
 }

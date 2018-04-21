@@ -1,29 +1,28 @@
 #pragma once
 
+#include "object.h"
+
 #include "graphics.h"
 #include "spritemap.h"
 
-class Powerup {
+class Powerup : public Object {
   public:
 
     enum class Type { Right, Left, Up, Down, K, N, O, B };
 
     Powerup();
-    void update(unsigned int elapased);
-    void draw(Graphics& graphics) const;
-    void kill();
 
-    bool touching(double x, double y, double r) const;
+    void update(unsigned int elapased) override;
+    void draw(Graphics& graphics) const override;
+    inline bool dead() const override { return y_ > 250; };
 
-    inline bool dead() const { return y_ > 250; };
     inline Type type() const { return type_; };
-
-    inline double x() const { return x_; }
-    inline double y() const { return y_; }
+    void kill();
+    bool touching(const Object& o, double r) const;
 
   private:
 
     SpriteMap sprites_;
-    double x_, y_, vy_;
+    double vy_;
     Type type_;
 };

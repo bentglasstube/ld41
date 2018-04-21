@@ -1,23 +1,25 @@
 #pragma once
 
+#include "object.h"
+
 #include "graphics.h"
 #include "spritemap.h"
 
-class Ship {
+class Ship : public Object {
   public:
 
     Ship();
 
-    void thrust(double v);
-    void update(unsigned int elapsed);
-    void draw(Graphics& graphics, int y) const;
+    void thrust(double vx, double vy = 0);
 
-    double x() const { return x_; }
+    void update(unsigned int elapsed) override;
+    void draw(Graphics& graphics) const override;
+    inline bool dead() const override { return false; };
 
   private:
 
     SpriteMap sprites_;
-    double x_, vx_;
+    double vx_, vy_;
 
     static constexpr double kSpeed = 0.05;
 };

@@ -4,7 +4,7 @@
 
 #include "util.h"
 
-Powerup::Powerup() : sprites_("powerups.png", 4, 16, 16), x_(0), y_(0), vy_(-10) {
+Powerup::Powerup() : Object(0, 0), sprites_("powerups.png", 4, 16, 16), vy_(-10) {
   vy_ = 0.07;
 
   std::mt19937 rand;
@@ -32,8 +32,8 @@ void Powerup::kill() {
   y_ = 999;
 }
 
-bool Powerup::touching(double x, double y, double r) const {
-  const double dx = x - x_;
-  const double dy = y - y_;
+bool Powerup::touching(const Object& o, double r) const {
+  const double dx = o.x() - x_;
+  const double dy = o.y() - y_;
   return dx * dx + dy * dy < (8 + r) * (8 + r);
 }

@@ -48,29 +48,21 @@ pkg_tar(
 )
 
 cc_library(
-    name = "bullet",
-    srcs = ["bullet.cc"],
-    hdrs = ["bullet.h"],
-    deps = [
-        "@libgam//:graphics",
-        "@libgam//:spritemap",
+    name = "objects",
+    srcs = [
+        "bullet.cc",
+        "explosion.cc",
+        "object.cc",
+        "powerup.cc",
+        "ship.cc",
     ],
-)
-
-cc_library(
-    name = "explosion",
-    srcs = ["explosion.cc"],
-    hdrs = ["explosion.h"],
-    deps = [
-        "@libgam//:graphics",
-        "@libgam//:spritemap",
+    hdrs = [
+        "bullet.h",
+        "explosion.h",
+        "object.h",
+        "powerup.h",
+        "ship.h",
     ],
-)
-
-cc_library(
-    name = "powerup",
-    srcs = ["powerup.cc"],
-    hdrs = ["powerup.h"],
     deps = [
         "@libgam//:graphics",
         "@libgam//:spritemap",
@@ -95,24 +87,12 @@ cc_library(
     srcs = ["puzzle_screen.cc"],
     hdrs = ["puzzle_screen.h"],
     deps = [
-        ":bullet",
-        ":explosion",
-        ":powerup",
+        ":objects",
         ":puzzle",
-        ":ship",
+        "@libgam//:parallax_backdrop",
         "@libgam//:screen",
         "@libgam//:spritemap",
         "@libgam//:text",
-    ],
-)
-
-cc_library(
-    name = "ship",
-    srcs = ["ship.cc"],
-    hdrs = ["ship.h"],
-    deps = [
-        "@libgam//:graphics",
-        "@libgam//:spritemap",
     ],
 )
 

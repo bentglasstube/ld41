@@ -1,8 +1,9 @@
 #include "explosion.h"
 
 Explosion::Explosion(double x, double y) :
+  Object(x, y),
   sprites_("ships.png", 4, 16, 16),
-  x_(x), y_(y), timer_(0) {}
+  timer_(0) {}
 
 void Explosion::update(unsigned int elapsed) {
   timer_ += elapsed;
