@@ -17,6 +17,8 @@ class PuzzleScreen : public Screen {
 
   private:
 
+    enum class Direction { Left, Right, Up, Down };
+
     SpriteMap tiles_;
     Text text_;
     int timer_;
@@ -24,5 +26,5 @@ class PuzzleScreen : public Screen {
     std::array<unsigned int, 16> pieces_;
 
     void reset();
-    void move(int direction);
+    void move(Direction direction);
 };

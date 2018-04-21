@@ -16,13 +16,13 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
     timer_ += elapsed;
 
     if (input.key_pressed(Input::Button::Right)) {
-      move(0);
+      move(Direction::Left);
     } else if (input.key_pressed(Input::Button::Left)) {
-      move(1);
+      move(Direction::Right);
     } else if (input.key_pressed(Input::Button::Up)) {
-      move(3);
+      move(Direction::Down);
     } else if (input.key_pressed(Input::Button::Down)) {
-      move(2);
+      move(Direction::Up);
     }
   }
 
@@ -62,14 +62,14 @@ void PuzzleScreen::reset() {
   rand.seed(Util::random_seed());
 
   for (size_t i = 0; i < 4096; ++i) {
-    move(dist(rand));
+    move(static_cast<PuzzleScreen::Direction>(dist(rand)));
   }
 
   timer_ = 0;
   solved_ = false;
 }
 
-void PuzzleScreen::move(int direction) {
+void PuzzleScreen::move(PuzzleScreen::Direction direction) {
   int empty = 0;
 
   for (size_t i = 0; i < 16; ++ i) {
@@ -80,22 +80,22 @@ void PuzzleScreen::move(int direction) {
   }
 
   switch (direction) {
-    case 0: // left
+    case Direction::Left:
       if (empty % 4 == 0) return;
       std::swap(pieces_[empty - 1], pieces_[empty]);
       break;
 
-    case 1: // right
+    case Direction::Right:
       if (empty % 4 == 3) return;
       std::swap(pieces_[empty + 1], pieces_[empty]);
       break;
 
-    case 2: // up
+    case Direction::Up:
       if (empty < 4) return;
       std::swap(pieces_[empty - 4], pieces_[empty]);
       break;
 
-    case 3: // down
+    case Direction::Down:
       if (empty > 11) return;
       std::swap(pieces_[empty + 4], pieces_[empty]);
       break;
