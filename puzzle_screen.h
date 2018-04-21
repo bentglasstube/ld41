@@ -19,7 +19,7 @@ class PuzzleScreen : public Screen {
 
     enum class Direction { Left, Right, Up, Down };
 
-    SpriteMap tiles_;
+    SpriteMap tiles_, gui_;
     Text text_;
     int timer_;
     bool solved_;

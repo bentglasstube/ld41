@@ -5,7 +5,11 @@
 
 #include "util.h"
 
-PuzzleScreen::PuzzleScreen() : tiles_("puzzle.png", 4, 16, 16), text_("text.png") {
+PuzzleScreen::PuzzleScreen() :
+  tiles_("puzzle.png", 4, 16, 16),
+  gui_("gui.png", 3, 8, 8),
+  text_("text.png")
+{
   reset();
 }
 
@@ -31,8 +35,8 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
 
 void PuzzleScreen::draw(Graphics& graphics) const {
   for (int i = 0; i < 16; ++i) {
-    const int x = (i % 4) * 16;
-    const int y = (i / 4) * 16;
+    const int x = (i % 4) * 16 + 188;
+    const int y = (i / 4) * 16 + 4;
 
     const int n = (pieces_[i] == 15 && !solved_) ? 0 : pieces_[i] + 4;
     tiles_.draw(graphics, n, x, y);
@@ -44,7 +48,29 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   char buffer[24];
   sprintf(buffer, "%u:%02u", m, s);
 
-  text_.draw(graphics, buffer, 0, 120);
+  text_.draw(graphics, buffer, 252, 71, Text::Alignment::Right);
+
+  gui_.draw(graphics, 0, 184, 0);
+  gui_.draw(graphics, 2, 248, 0);
+
+  gui_.draw(graphics, 9, 184, 82);
+  gui_.draw(graphics, 11, 248, 82);
+
+  for (int x = 192; x < 248; x += 8) {
+    gui_.draw(graphics, 1, x, 0);
+    gui_.draw(graphics, 1, x, 68);
+    gui_.draw(graphics, 1, x, 86);
+  }
+
+  for (int y = 8; y < 80; y += 8) {
+    if (y == 64) y -= 4;
+    gui_.draw(graphics, 3, 184, y);
+    gui_.draw(graphics, 5, 248, y);
+  }
+
+  gui_.draw(graphics, 6, 184, 66);
+  gui_.draw(graphics, 8, 248, 66);
+
 }
 
 Screen* PuzzleScreen::next_screen() const {
