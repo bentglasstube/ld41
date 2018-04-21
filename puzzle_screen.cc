@@ -12,7 +12,7 @@ PuzzleScreen::PuzzleScreen() :
   reset();
 }
 
-bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
+bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed) {
   if (!puzzle_.solved()) {
     timer_ += elapsed;
   }
@@ -24,6 +24,7 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
 
   if (input.key_pressed(Input::Button::A) && bullets_.size() < 3) {
     bullets_.emplace_back(player_.x(), 200);
+    audio.play_sample("bullet.wav");
   }
 
   player_.update(elapsed);
@@ -47,6 +48,7 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
 
     if (powerup.touching(player_.x(), 208, 4)) {
       powerup.kill();
+      audio.play_sample("powerup.wav");
 
       switch (powerup.type()) {
         case Powerup::Type::Left:
@@ -74,6 +76,7 @@ bool PuzzleScreen::update(const Input& input, Audio&, unsigned int elapsed) {
     for (auto& bullet : bullets_) {
       if (powerup.touching(bullet.x(), bullet.y(), 2)) {
         explosions_.emplace_back(powerup.x(), powerup.y());
+        audio.play_sample("explode.wav");
 
         bullet.kill();
         powerup.kill();
