@@ -6,6 +6,7 @@
 
 PuzzleScreen::PuzzleScreen() :
   gui_("gui.png", 3, 8, 8),
+  bg_("starfield.png", 256, 1920, 4),
   text_("text.png")
 {
   rand_.seed(Util::random_seed());
@@ -98,6 +99,8 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 }
 
 void PuzzleScreen::draw(Graphics& graphics) const {
+  bg_.draw(graphics, 0, -timer_);
+
   puzzle_.draw(graphics, 188, 4);
   player_.draw(graphics, 208);
 
@@ -112,6 +115,8 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   for (const auto& explosion: explosions_) {
     explosion.draw(graphics);
   }
+
+  // TODO black out region
 
   const int s = (timer_ / 1000) % 60;
   const int m = timer_ / 1000 / 60;

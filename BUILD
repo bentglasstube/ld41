@@ -84,6 +84,7 @@ cc_library(
     hdrs = ["puzzle.h"],
     deps = [
         "@libgam//:graphics",
+        "@libgam//:parallax_backdrop",
         "@libgam//:spritemap",
         "@libgam//:util",
     ],

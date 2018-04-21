@@ -4,6 +4,7 @@
 #include <random>
 #include <vector>
 
+#include "parallax_backdrop.h"
 #include "screen.h"
 #include "spritemap.h"
 #include "text.h"
@@ -26,6 +27,7 @@ class PuzzleScreen : public Screen {
   private:
 
     SpriteMap gui_;
+    ParallaxBackdrop bg_;
     Text text_;
     std::mt19937 rand_;
 
