@@ -5,10 +5,8 @@
 #include "bullet.h"
 
 Ship::Ship() :
-  Object(92, 224),
-  sprites_("ships.png", 4, 16, 16),
-  weapon_(Bullet::Type::Bullet),
-  weapon_timer_(0), hit_timer_(0),
+  Object(92, 224), sprites_("ships.png", 4, 16, 16),
+  weapon_(Bullet::Type::Bullet), weapon_timer_(0),
   health_(8), shield_(0), fuel_(5000) {}
 
 void Ship::thrust(double vx, double vy, bool boost) {
@@ -50,11 +48,12 @@ void Ship::update(unsigned int elapsed) {
   x_ = Util::clamp(x_ + elapsed * vx_ * s, 8.0, 176.0);
   y_ = Util::clamp(y_ + elapsed * vy_ * s, 8.0, 232.0);
 
-  weapon_timer_ -= elapsed;
-
-  if (weapon_timer_ < 0) {
-    weapon_ = Bullet::Type::Bullet;
-    weapon_timer_ = 0;
+  if (weapon_timer_ > 0) {
+    weapon_timer_ -= elapsed;
+    if (weapon_timer_ <= 0) {
+      weapon_ = Bullet::Type::Bullet;
+      weapon_timer_ = 0;
+    }
   }
 
   if (boosting()) {
@@ -69,10 +68,6 @@ void Ship::draw(Graphics& graphics) const {
   if (!dead()) {
     const int n = vx_ < 0 ? 1 : vx_ > 0 ? 2 : 0;
     sprites_.draw(graphics, n, x_ - 8, y_ - 8);
-
-    if (shield_ > 0) {
-      // TODO show energy after hit
-      sprites_.draw(graphics, 15, x_ - 8, y_ - 8);
-    }
+    if (shield_ > 0) sprites_.draw(graphics, 3, x_ - 8, y_ - 8);
   }
 }

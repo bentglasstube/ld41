@@ -36,7 +36,7 @@ class Ship : public Object {
     SpriteMap sprites_;
     double vx_, vy_;
     Bullet::Type weapon_;
-    int weapon_timer_, hit_timer_;
+    int weapon_timer_;
     int health_, shield_, fuel_;
     bool boosting_;
 
