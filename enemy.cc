@@ -1,11 +1,15 @@
 #include "enemy.h"
 
 #include <cmath>
+#include <random>
 
 Enemy::Enemy(double x, double y, Type type) :
   Object(x, y), sprites_("enemies.png", 4, 16, 16),
   type_(type), timer_(0)
 {
+  std::mt19937 rand;
+  rand.seed(Util::random_seed());
+
   switch (type) {
     case Type::Invader:
       x_ = std::round(x_ / 16) * 16 - 4;
@@ -30,6 +34,14 @@ Enemy::Enemy(double x, double y, Type type) :
       break;
 
     case Type::Jelly:
+      {
+        std::uniform_real_distribution<double> vxdist(-0.2, 0.2);
+
+        x_ = std::round(x_ / 16) * 16 - 4;
+        y_ = -8;
+        vx_ = vxdist(rand);
+        vy_ = 0.5;
+      }
       break;
 
     case Type::Elephant:
@@ -77,6 +89,9 @@ double Enemy::x() const {
 
 double Enemy::y() const {
   switch (type_) {
+    case Type::Jelly:
+      return y_ + 16 * std::sin(timer_ / 250.0f);
+
     default:
       return y_;
   }
