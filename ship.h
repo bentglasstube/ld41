@@ -32,5 +32,5 @@ class Ship : public Object {
     Bullet::Type weapon_;
     int weapon_timer_, health_;
 
-    static constexpr double kSpeed = 0.05;
+    static constexpr double kSpeed = 0.08;
 };

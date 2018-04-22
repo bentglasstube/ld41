@@ -48,15 +48,20 @@ Enemy::Enemy(double x, double y, Type type, const Object& target ) :
       y_ = -8;
       vx_ = 0;
       vy_ = 0.2;
+      break;
 
+    case Type::GhostCrab:
+      y_ = -8;
+      move_toward(92, 60, 1.5);
+      break;
+
+    case Type::Eyeball:
+      move_toward(target.x(), target.y(), 0.8);
       break;
 
     case Type::Fireball:
-      {
-        const double a = std::atan2(target.y() - y, target.x() - x);
-        vx_ = std::cos(a) * 1.2;
-        vy_ = std::sin(a) * 1.2;
-      }
+      move_toward(target.x(), target.y(), 1.25);
+      break;
 
     default:
       break;
@@ -103,6 +108,9 @@ double Enemy::x() const {
     case Type::Elephant:
       return 92 + 64 * std::sin(timer_ / 500.0) + 16 * std::cos(timer_ / 350.0);
 
+    case Type::GhostCrab:
+      return x_ + 80 * Util::clamp(timer_ / 2500.0, 0.0, 1.0) * std::cos(timer_ / 400.0);
+
     default:
       return x_;
   }
@@ -113,6 +121,9 @@ double Enemy::y() const {
     case Type::Jelly:
       return y_ + 16 * std::sin(timer_ / 250.0);
 
+    case Type::GhostCrab:
+      return y_ + 80 * Util::clamp(timer_ / 2500.0, 0.0, 1.0) * std::sin(timer_ / 400.0);
+
     default:
       return y_;
   }
@@ -122,13 +133,19 @@ int Enemy::sprite_index() const {
   return static_cast<int>(type_) * 4 + ((timer_ / 125) % 4);
 }
 
+void Enemy::move_toward(double tx, double ty, double speed) {
+  const double a = std::atan2(ty - y(), tx - x());
+  vx_ = std::cos(a) * speed;
+  vy_ = std::sin(a) * speed;
+}
+
 const std::unordered_map<Enemy::Type, int, Util::CastHash<Enemy::Type>> Enemy::kShotInterval = {
   { Enemy::Type::Invader,   100000 },
   { Enemy::Type::Shroom,    100000 },
   { Enemy::Type::Crab,        5000 },
   { Enemy::Type::Jelly,       5000 },
   { Enemy::Type::Elephant,    2500 },
-  { Enemy::Type::GhostCrab,   1000 },
+  { Enemy::Type::GhostCrab,    500 },
   { Enemy::Type::Eyeball,        0 },
   { Enemy::Type::Fireball,       0 },
 };

@@ -113,7 +113,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     if (enemy_timer_ < 0) {
       // TODO better enemy progression
-      std::uniform_int_distribution<int> tdist(0, 4);
+      std::uniform_int_distribution<int> tdist(0, 5);
       std::uniform_int_distribution<int> xdist(8, 176);
       std::uniform_int_distribution<int> ydist(8, 96);
       enemies_.emplace_back(xdist(rand_), ydist(rand_), static_cast<Enemy::Type>(tdist(rand_)), player_);
