@@ -12,7 +12,7 @@ PuzzleScreen::PuzzleScreen() :
   bg_("starfield.png", 256, 2048, 8),
   text_("text.png"),
   state_(GameState::Playing),
-  timer_(0), state_timer_(0), enemy_timer_(5000),
+  timer_(0), state_timer_(0), enemy_timer_(1500),
   bgoffset_(0), choice_(0)
 {
   rand_.seed(Util::random_seed());
@@ -77,11 +77,12 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     // spawn enemy waves
     if (enemy_timer_ < 0) {
-      std::uniform_int_distribution<int> tdist(0, 6);
-      std::uniform_int_distribution<int> xdist(0, 184);
-      enemies_.emplace_back(xdist(rand_), -8, static_cast<Enemy::Type>(tdist(rand_)));
+      std::uniform_int_distribution<int> tdist(0, 1);
+      std::uniform_int_distribution<int> xdist(8, 176);
+      std::uniform_int_distribution<int> ydist(8, 96);
+      enemies_.emplace_back(xdist(rand_), ydist(rand_), static_cast<Enemy::Type>(tdist(rand_)));
 
-      enemy_timer_ += 3000 - timer_ / 100;
+      enemy_timer_ += std::max(3000 - timer_ / 100, 1000);
     }
 
     for (auto& powerup : powerups_) {

@@ -6,6 +6,7 @@
 
 #include "graphics.h"
 #include "spritemap.h"
+#include "util.h"
 
 class Enemy : public Object {
 
@@ -18,7 +19,7 @@ class Enemy : public Object {
 
     void update(unsigned int elapsed) override;
     void draw(Graphics& graphics) const override;
-    inline bool dead() const override { return y_ > 500; }
+    inline bool dead() const override { return x_ < -10 || x_ > 194 || y_ > 266; };
     inline void kill() override { y_ = 999; };
 
     inline Type type() const { return type_; };
@@ -28,7 +29,11 @@ class Enemy : public Object {
     SpriteMap sprites_;
     Type type_;
     double vx_, vy_;
-    int timer_;
+    int timer_, shot_timer_;
 
     int sprite_index() const;
+
+    static const std::unordered_map<Type, int, Util::CastHash<Type>> kShotInterval;
 };
+
+
