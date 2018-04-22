@@ -30,12 +30,12 @@ int Bullet::sprite_index() const {
   }
 }
 
-const std::unordered_map<Bullet::Type, double> Bullet::kSpeed = {
+const std::unordered_map<Bullet::Type, double, Util::CastHash<Bullet::Type>> Bullet::kSpeed = {
   { Type::Bullet, -0.2 },
   { Type::Laser, -0.35 },
 };
 
-const std::unordered_map<Bullet::Type, std::string> Bullet::kSample = {
+const std::unordered_map<Bullet::Type, std::string, Util::CastHash<Bullet::Type>> Bullet::kSample = {
   { Type::Bullet, "bullet.wav" },
   { Type::Laser, "laser.wav" },
 };

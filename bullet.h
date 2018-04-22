@@ -6,6 +6,7 @@
 
 #include "graphics.h"
 #include "spritemap.h"
+#include "util.h"
 
 class Bullet : public Object {
   public:
@@ -30,6 +31,6 @@ class Bullet : public Object {
 
     int sprite_index() const;
 
-    static const std::unordered_map<Type, double> kSpeed;
-    static const std::unordered_map<Type, std::string> kSample;
+    static const std::unordered_map<Type, double, Util::CastHash<Type>> kSpeed;
+    static const std::unordered_map<Type, std::string, Util::CastHash<Type>> kSample;
 };
