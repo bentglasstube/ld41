@@ -15,9 +15,10 @@ class Ship : public Object {
 
     Ship();
 
-    void thrust(double vx, double vy);
+    void thrust(double vx, double vy, bool boost);
     void weapon(Bullet::Type weapon);
     void get_shield();
+    void get_fuel();
     Bullet* fire() const;
     void hurt(Audio& audio);
 
@@ -27,6 +28,8 @@ class Ship : public Object {
     inline int weapon_timer() const { return weapon_timer_; };
     inline int health() const { return health_; }
     inline int shield() const { return shield_; }
+    inline int fuel() const { return fuel_; }
+    inline bool boosting() const { return fuel_ > 0 && boosting_; }
 
   private:
 
@@ -34,7 +37,8 @@ class Ship : public Object {
     double vx_, vy_;
     Bullet::Type weapon_;
     int weapon_timer_, hit_timer_;
-    int health_, shield_;
+    int health_, shield_, fuel_;
+    bool boosting_;
 
     static constexpr double kSpeed = 0.08;
 };

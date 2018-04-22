@@ -31,7 +31,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     if (input.key_held(Input::Button::Right)) ++tx;
     if (input.key_held(Input::Button::Up)) --ty;
     if (input.key_held(Input::Button::Down)) ++ty;
-    player_.thrust(tx, ty);
+    player_.thrust(tx, ty, input.key_held(Input::Button::B));
 
     if (input.key_pressed(Input::Button::A) && bullets_.size() < 3) {
       Bullet* b = player_.fire();
@@ -44,6 +44,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
   if (state_ != GameState::Paused) {
     player_.update(elapsed);
+    if (player_.boosting()) audio.play_sample("boost.wav");
 
     for (auto& bullet : bullets_) bullet->update(elapsed);
     for (auto& enemy : enemies_) {
@@ -140,6 +141,11 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
             audio.play_sample("powerup.wav");
             break;
 
+          case Powerup::Type::O:
+            player_.get_fuel();
+            audio.play_sample("powerup.wav");
+            break;
+
           default:
             break;
         }
@@ -192,7 +198,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
       if (player_.y() > 201) --ty;
       if (state_timer_ > 2500) ty = -4;
 
-      player_.thrust(tx, ty);
+      player_.thrust(tx, ty, false);
     } else {
       if (!handle_menu(input, audio)) return false;
     }
@@ -252,12 +258,12 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   Bar health_bar = Bar(Bar::Color::Red, 8, 72);
   Bar weapon_bar = Bar(Bar::Color::Green, 10000, 72);
   Bar shield_bar = Bar(Bar::Color::Blue, 30000, 72);
-  Bar boost_bar = Bar(Bar::Color::Yellow, 64, 72);
+  Bar boost_bar = Bar(Bar::Color::Yellow, 10000, 72);
 
   health_bar.draw(graphics, 184, 96, player_.health());
   weapon_bar.draw(graphics, 184, 104, player_.weapon_timer());
   shield_bar.draw(graphics, 184, 112, player_.shield());
-  boost_bar.draw(graphics, 184, 120, 0);
+  boost_bar.draw(graphics, 184, 120, player_.fuel());
 
   if (state_ == GameState::Paused) {
     if ((state_timer_ / 500) % 2 == 0) {

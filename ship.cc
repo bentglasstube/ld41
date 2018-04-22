@@ -9,11 +9,12 @@ Ship::Ship() :
   sprites_("ships.png", 4, 16, 16),
   weapon_(Bullet::Type::Bullet),
   weapon_timer_(0), hit_timer_(0),
-  health_(8), shield_(0) {}
+  health_(8), shield_(0), fuel_(5000) {}
 
-void Ship::thrust(double vx, double vy) {
+void Ship::thrust(double vx, double vy, bool boost) {
   vx_ = vx;
   vy_ = vy;
+  boosting_ = boost;
 }
 
 void Ship::weapon(Bullet::Type weapon) {
@@ -23,6 +24,11 @@ void Ship::weapon(Bullet::Type weapon) {
 
 void Ship::get_shield() {
   shield_ = 30000;
+}
+
+void Ship::get_fuel() {
+  fuel_ += 1000;
+  if (fuel_ > 10000) fuel_ = 10000;
 }
 
 Bullet* Ship::fire() const {
@@ -40,14 +46,20 @@ void Ship::hurt(Audio& audio) {
 }
 
 void Ship::update(unsigned int elapsed) {
-  x_ = Util::clamp(x_ + elapsed * vx_ * kSpeed, 8.0, 176.0);
-  y_ = Util::clamp(y_ + elapsed * vy_ * kSpeed, 8.0, 232.0);
+  const double s = kSpeed * (boosting() ? 1.5 : 1);
+  x_ = Util::clamp(x_ + elapsed * vx_ * s, 8.0, 176.0);
+  y_ = Util::clamp(y_ + elapsed * vy_ * s, 8.0, 232.0);
 
   weapon_timer_ -= elapsed;
 
   if (weapon_timer_ < 0) {
     weapon_ = Bullet::Type::Bullet;
     weapon_timer_ = 0;
+  }
+
+  if (boosting()) {
+   fuel_ -= elapsed;
+   if (fuel_ < 0) fuel_ = 0;
   }
 
   if (shield_ > 0) shield_ -= elapsed;
