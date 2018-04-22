@@ -11,11 +11,11 @@
 class Enemy : public Object {
 
   public:
-    enum class Type { Invader, Shroom, Crab, Jelly, Elephant, GhostCrab, Eyeball };
+    enum class Type { Invader, Shroom, Crab, Jelly, Elephant, GhostCrab, Eyeball, Fireball };
 
-    Enemy(double x, double y, Type type);
+    Enemy(double x, double y, Type type, const Object& target);
 
-    void ai(const Object& target);
+    bool fire();
 
     void update(unsigned int elapsed) override;
     void draw(Graphics& graphics) const override;

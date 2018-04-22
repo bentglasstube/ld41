@@ -44,6 +44,7 @@ class PuzzleScreen : public Screen {
     std::vector<Bullet*> bullets_;
     std::vector<Explosion> explosions_;
     std::vector<Enemy> enemies_;
+    std::vector<Enemy> fireballs_;
 
     int timer_, state_timer_, enemy_timer_;
     int bgoffset_, choice_;

@@ -47,7 +47,10 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     for (auto& bullet : bullets_) bullet->update(elapsed);
     for (auto& enemy : enemies_) {
-      enemy.ai(player_);
+      if (!player_.dead() && enemy.fire()) {
+        fireballs_.emplace_back(enemy.x(), enemy.y(), Enemy::Type::Fireball, player_);
+      }
+
       enemy.update(elapsed);
 
       for (auto& bullet : bullets_) {
@@ -68,7 +71,6 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
           explosions_.emplace_back(player_.x(), player_.y());
           lose(audio);
         } else {
-          puzzle_.random_move(3);
           audio.play_sample("hurt.wav");
           explosions_.emplace_back(enemy.x(), enemy.y());
           enemy.kill();
@@ -77,14 +79,31 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     }
 
     for (auto& explosion : explosions_) explosion.update(elapsed);
+    for (auto& fireball: fireballs_) {
+      fireball.update(elapsed);
+      if (player_.dead()) continue;
+      if (collision(fireball, player_, 12)) {
+        player_.hurt();
+        if (player_.dead()) {
+          audio.play_sample("dead.wav");
+          lose(audio);
+        } else {
+          audio.play_sample("hurt.wav");
+        }
+        explosions_.emplace_back(player_.x(), player_.y());
+        fireball.kill();
+      }
+    }
 
     for (auto& powerup : powerups_) {
       powerup.update(elapsed);
 
       for (auto& bullet : bullets_) {
         if (collision(*bullet, powerup, 10)) {
-          if (bullet->type() == Bullet::Type::Laser && powerup.rotate()) audio.play_sample("rotate.wav");
-          bullet->kill();
+          if (bullet->type() == Bullet::Type::Laser && powerup.rotate()) {
+            audio.play_sample("rotate.wav");
+            bullet->kill();
+          }
         }
       }
     }
@@ -92,15 +111,14 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
   if (state_ == GameState::Playing) {
 
-    // spawn enemy waves
     if (enemy_timer_ < 0) {
       // TODO better enemy progression
-      std::uniform_int_distribution<int> tdist(0, 3);
+      std::uniform_int_distribution<int> tdist(0, 4);
       std::uniform_int_distribution<int> xdist(8, 176);
       std::uniform_int_distribution<int> ydist(8, 96);
-      enemies_.emplace_back(xdist(rand_), ydist(rand_), static_cast<Enemy::Type>(tdist(rand_)));
+      enemies_.emplace_back(xdist(rand_), ydist(rand_), static_cast<Enemy::Type>(tdist(rand_)), player_);
 
-      enemy_timer_ += std::max(3000 - timer_ / 100, 1000);
+      enemy_timer_ += std::max(3000 - timer_ / 100, 500);
     }
 
     for (auto& powerup : powerups_) {
@@ -204,6 +222,7 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   for (const auto& bullet : bullets_) bullet->draw(graphics);
   for (const auto& explosion : explosions_) explosion.draw(graphics);
   for (const auto& enemy : enemies_) enemy.draw(graphics);
+  for (const auto& fireball: fireballs_) fireball.draw(graphics);
 
   SDL_Rect r = { 184, 0, 72, 240 };
   graphics.draw_rect(&r, 0x000000ff, true);
@@ -310,14 +329,14 @@ void PuzzleScreen::pause(Audio& audio) {
     state_ = GameState::Paused;
     state_timer_ = 0;
     choice_ = 0;
-    audio.play_sample("whirl.wav");
+    audio.play_sample("pause.wav");
   }
 }
 
 void PuzzleScreen::resume(Audio& audio) {
   if (state_ == GameState::Paused) {
     state_ = GameState::Playing;
-    audio.play_sample("whirl.wav");
+    audio.play_sample("pause.wav");
   }
 }
 

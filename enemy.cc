@@ -3,7 +3,7 @@
 #include <cmath>
 #include <random>
 
-Enemy::Enemy(double x, double y, Type type) :
+Enemy::Enemy(double x, double y, Type type, const Object& target ) :
   Object(x, y), sprites_("enemies.png", 4, 16, 16),
   type_(type), timer_(0)
 {
@@ -45,23 +45,34 @@ Enemy::Enemy(double x, double y, Type type) :
       break;
 
     case Type::Elephant:
+      y_ = -8;
+      vx_ = 0;
+      vy_ = 0.2;
+
       break;
 
-    case Type::GhostCrab:
-      break;
+    case Type::Fireball:
+      {
+        const double a = std::atan2(target.y() - y, target.x() - x);
+        vx_ = std::cos(a) * 1.2;
+        vy_ = std::sin(a) * 1.2;
+      }
 
-    case Type::Eyeball:
+    default:
       break;
-
   }
+
+  shot_timer_ = kShotInterval.at(type_);
 }
 
-void Enemy::ai(const Object& target) {
+bool Enemy::fire() {
   const int ival = kShotInterval.at(type_);
   if (shot_timer_ < 0 && ival > 0) {
-    // todo fire shot
     shot_timer_ += ival;
+    return true;
   }
+
+  return false;
 }
 
 void Enemy::update(unsigned int elapsed) {
@@ -71,6 +82,13 @@ void Enemy::update(unsigned int elapsed) {
   y_ += vy_;
 
   if (y_ > 0) shot_timer_ -= elapsed;
+
+  if (type_ == Type::Elephant) {
+    if (y_ > 64) {
+      y_ = 64;
+      vy_ = 0;
+    }
+  }
 }
 
 void Enemy::draw(Graphics& graphics) const {
@@ -80,7 +98,10 @@ void Enemy::draw(Graphics& graphics) const {
 double Enemy::x() const {
   switch (type_) {
     case Type::Crab:
-      return x_ + 32 * std::sin(timer_ / 500.0f);
+      return x_ + 32 * std::sin(timer_ / 500.0);
+
+    case Type::Elephant:
+      return 92 + 64 * std::sin(timer_ / 500.0) + 16 * std::cos(timer_ / 350.0);
 
     default:
       return x_;
@@ -90,7 +111,7 @@ double Enemy::x() const {
 double Enemy::y() const {
   switch (type_) {
     case Type::Jelly:
-      return y_ + 16 * std::sin(timer_ / 250.0f);
+      return y_ + 16 * std::sin(timer_ / 250.0);
 
     default:
       return y_;
@@ -102,11 +123,12 @@ int Enemy::sprite_index() const {
 }
 
 const std::unordered_map<Enemy::Type, int, Util::CastHash<Enemy::Type>> Enemy::kShotInterval = {
-  { Enemy::Type::Invader,   0 },
-  { Enemy::Type::Shroom,    0 },
-  { Enemy::Type::Crab,      0 },
-  { Enemy::Type::Jelly,     0 },
-  { Enemy::Type::Elephant,  0 },
-  { Enemy::Type::GhostCrab, 0 },
-  { Enemy::Type::Eyeball,   0 },
+  { Enemy::Type::Invader,   100000 },
+  { Enemy::Type::Shroom,    100000 },
+  { Enemy::Type::Crab,        5000 },
+  { Enemy::Type::Jelly,       5000 },
+  { Enemy::Type::Elephant,    2500 },
+  { Enemy::Type::GhostCrab,   1000 },
+  { Enemy::Type::Eyeball,        0 },
+  { Enemy::Type::Fireball,       0 },
 };
