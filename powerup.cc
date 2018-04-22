@@ -4,12 +4,9 @@
 
 #include "util.h"
 
-Powerup::Powerup() : Object(0, -8), sprites_("powerups.png", 4, 16, 16) {
+Powerup::Powerup(double x, double y) : Object(x, y), sprites_("powerups.png", 4, 16, 16) {
   std::mt19937 rand;
   rand.seed(Util::random_seed());
-
-  std::uniform_real_distribution<double> xdist(8, 176);
-  x_ = xdist(rand);
 
   std::uniform_real_distribution<double> vydist(0.04, 0.09);
   vy_ = vydist(rand);

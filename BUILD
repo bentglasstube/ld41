@@ -51,6 +51,7 @@ cc_library(
     name = "objects",
     srcs = [
         "bullet.cc",
+        "enemy.cc",
         "explosion.cc",
         "object.cc",
         "powerup.cc",
@@ -58,6 +59,7 @@ cc_library(
     ],
     hdrs = [
         "bullet.h",
+        "enemy.h",
         "explosion.h",
         "object.h",
         "powerup.h",

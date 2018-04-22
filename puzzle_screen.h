@@ -11,6 +11,7 @@
 #include "title_screen.h"
 
 #include "bullet.h"
+#include "enemy.h"
 #include "explosion.h"
 #include "powerup.h"
 #include "puzzle.h"
@@ -38,11 +39,14 @@ class PuzzleScreen : public Screen {
     GameState state_;
     Puzzle puzzle_;
     Ship player_;
+
     std::vector<Powerup> powerups_;
     std::vector<Bullet*> bullets_;
     std::vector<Explosion> explosions_;
+    std::vector<Enemy> enemies_;
 
-    int timer_, state_timer_, bgoffset_, choice_;
+    int timer_, state_timer_, enemy_timer_;
+    int bgoffset_, choice_;
 
     bool collision(const Object& a, const Object& b, double r) const;
 

@@ -12,7 +12,7 @@ PuzzleScreen::PuzzleScreen() :
   bg_("starfield.png", 256, 2048, 8),
   text_("text.png"),
   state_(GameState::Playing),
-  timer_(0), state_timer_(0),
+  timer_(0), state_timer_(0), enemy_timer_(5000),
   bgoffset_(0), choice_(0)
 {
   rand_.seed(Util::random_seed());
@@ -21,6 +21,7 @@ PuzzleScreen::PuzzleScreen() :
 bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed) {
   if (state_ == GameState::Playing) {
     timer_ += elapsed;
+    enemy_timer_ -= elapsed;
     bgoffset_ -= elapsed;
 
     int tx = 0, ty = 0;
@@ -42,14 +43,23 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
   if (state_ != GameState::Paused) {
     player_.update(elapsed);
 
-    // TODO Consolidate these objects into one
-    for (auto& bullet : bullets_) {
-      bullet->update(elapsed);
-    }
+    for (auto& bullet : bullets_) bullet->update(elapsed);
+    for (auto& enemy : enemies_) {
+      enemy.ai(player_);
+      enemy.update(elapsed);
 
-    for (auto& explosion : explosions_) {
-      explosion.update(elapsed);
+      for (auto& bullet : bullets_) {
+        if (collision(*bullet, enemy, 10)) {
+          explosions_.emplace_back(enemy.x(), enemy.y());
+          powerups_.emplace_back(enemy.x(), enemy.y());
+          audio.play_sample("explode.wav");
+
+          bullet->kill();
+          enemy.kill();
+        }
+      }
     }
+    for (auto& explosion : explosions_) explosion.update(elapsed);
 
     for (auto& powerup : powerups_) {
       powerup.update(elapsed);
@@ -64,9 +74,14 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
   }
 
   if (state_ == GameState::Playing) {
-    std::uniform_real_distribution<double> p(0, 1);
-    if (p(rand_) < 0.01) {
-      powerups_.emplace_back();
+
+    // spawn enemy waves
+    if (enemy_timer_ < 0) {
+      std::uniform_int_distribution<int> tdist(0, 6);
+      std::uniform_int_distribution<int> xdist(0, 184);
+      enemies_.emplace_back(xdist(rand_), -8, static_cast<Enemy::Type>(tdist(rand_)));
+
+      enemy_timer_ += 3000 - timer_ / 100;
     }
 
     for (auto& powerup : powerups_) {
@@ -102,6 +117,16 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     }
   }
 
+  explosions_.erase(std::remove_if(
+        explosions_.begin(), explosions_.end(),
+        [](const Explosion& e){ return e.dead();}),
+      explosions_.end());
+
+  enemies_.erase(std::remove_if(
+        enemies_.begin(), enemies_.end(),
+        [](const Enemy& e){ return e.dead();}),
+      enemies_.end());
+
   powerups_.erase(std::remove_if(
         powerups_.begin(), powerups_.end(),
         [](const Powerup& p){ return p.dead();}),
@@ -135,6 +160,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
       int ty = 0;
       if (player_.y() < 199) ++ty;
       if (player_.y() > 201) --ty;
+      if (state_timer_ > 2500) ty = -4;
 
       player_.thrust(tx, ty);
     } else {
@@ -149,15 +175,10 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   bg_.draw(graphics, 0, bgoffset_);
 
   player_.draw(graphics);
-  for (const auto& powerup : powerups_) {
-    powerup.draw(graphics);
-  }
-  for (const auto& bullet : bullets_) {
-    bullet->draw(graphics);
-  }
-  for (const auto& explosion: explosions_) {
-    explosion.draw(graphics);
-  }
+  for (const auto& powerup : powerups_) powerup.draw(graphics);
+  for (const auto& bullet : bullets_) bullet->draw(graphics);
+  for (const auto& explosion : explosions_) explosion.draw(graphics);
+  for (const auto& enemy : enemies_) enemy.draw(graphics);
 
   SDL_Rect r = { 184, 0, 72, 240 };
   graphics.draw_rect(&r, 0x000000ff, true);
@@ -210,7 +231,7 @@ void PuzzleScreen::draw(Graphics& graphics) const {
 
   if (state_ == GameState::Victory) {
     SDL_Rect r = { 0, 0, 184, 240 };
-    int white = Util::clamp(state_timer_ / 20, 0, 256);
+    int white = Util::clamp(state_timer_ / 15, 0, 255);
     graphics.draw_rect(&r, 0xffffff00 + white, true);
 
     if (state_timer_ >= 5000) {
