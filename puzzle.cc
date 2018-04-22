@@ -68,14 +68,17 @@ bool Puzzle::solved() const {
 }
 
 void Puzzle::draw(Graphics& graphics, int x, int y) const {
-  const bool s = solved();
+  // TODO set difficulty elsewhere
+  const int difficulty = 0;
 
   for (int i = 0; i < 16; ++i) {
     const int xx = (i % 4) * 16 + x;
     const int yy = (i / 4) * 16 + y;
 
-    const int n = (pieces_[i] == 15 && !s) ? 0 : pieces_[i] + 20;
-    tiles_.draw(graphics, n, xx, yy);
+    if (pieces_[i] == 15 && !solved()) continue;
+    tiles_.draw(graphics, pieces_[i] + difficulty * 16, xx, yy);
+
+    if (pieces_[i] == i) tiles_.draw(graphics, 48, xx, yy);
   }
 
 }

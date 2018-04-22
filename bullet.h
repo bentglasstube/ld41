@@ -11,13 +11,13 @@ class Bullet : public Object {
   public:
     enum class Type { Bullet, Laser };
 
-    Bullet(double x, double y, Type type_);
+    Bullet(double x, double y, Type type);
 
-    void update(unsigned int elapsed);
-    void draw(Graphics& graphics) const;
+    void update(unsigned int elapsed) override;
+    void draw(Graphics& graphics) const override;
+    inline bool dead() const override { return y_ < 0; };
+    inline void kill() override { y_ = -999; };
 
-    inline bool dead() const { return y_ < 0; };
-    inline void kill() { y_ = -999; };
     inline Type type() const { return type_; };
     inline std::string audio_sample() const { return kSample.at(type_); };
 
