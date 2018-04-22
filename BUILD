@@ -48,6 +48,16 @@ pkg_tar(
 )
 
 cc_library(
+    name = "bar",
+    srcs = ["bar.cc"],
+    hdrs = ["bar.h"],
+    deps = [
+        "@libgam//:graphics",
+        "@libgam//:spritemap",
+    ],
+)
+
+cc_library(
     name = "objects",
     srcs = [
         "bullet.cc",
@@ -95,6 +105,7 @@ cc_library(
         "title_screen.h",
     ],
     deps = [
+        ":bar",
         ":objects",
         ":puzzle",
         "@libgam//:backdrop",

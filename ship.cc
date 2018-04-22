@@ -7,7 +7,8 @@
 Ship::Ship() :
   Object(92, 224),
   sprites_("ships.png", 4, 16, 16),
-  weapon_(Bullet::Type::Bullet), weapon_timer_(0) {}
+  weapon_(Bullet::Type::Bullet), weapon_timer_(0),
+  health_(8) {}
 
 void Ship::thrust(double vx, double vy) {
   vx_ = vx;
@@ -23,6 +24,10 @@ Bullet* Ship::fire() const {
   return std::move(new Bullet(x_, y_ - 4, weapon_));
 }
 
+void Ship::hurt() {
+  health_ -= 1;
+}
+
 void Ship::update(unsigned int elapsed) {
   x_ = Util::clamp(x_ + elapsed * vx_ * kSpeed, 8.0, 176.0);
   y_ = Util::clamp(y_ + elapsed * vy_ * kSpeed, 8.0, 232.0);
@@ -36,6 +41,8 @@ void Ship::update(unsigned int elapsed) {
 }
 
 void Ship::draw(Graphics& graphics) const {
-  const int n = vx_ < 0 ? 1 : vx_ > 0 ? 2 : 0;
-  sprites_.draw(graphics, n, x_ - 8, y_ - 8);
+  if (!dead()) {
+    const int n = vx_ < 0 ? 1 : vx_ > 0 ? 2 : 0;
+    sprites_.draw(graphics, n, x_ - 8, y_ - 8);
+  }
 }

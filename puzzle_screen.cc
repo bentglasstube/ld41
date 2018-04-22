@@ -6,6 +6,8 @@
 
 #include "util.h"
 
+#include "bar.h"
+
 PuzzleScreen::PuzzleScreen() :
   gui_("gui.png", 3, 8, 8),
   panel_("panel.png", 2, 128, 128),
@@ -58,7 +60,22 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
           enemy.kill();
         }
       }
+
+      if (state_ == GameState::Playing && collision(player_, enemy, 12)) {
+        player_.hurt();
+        if (player_.dead()) {
+          audio.play_sample("dead.wav");
+          explosions_.emplace_back(player_.x(), player_.y());
+          lose(audio);
+        } else {
+          puzzle_.random_move(3);
+          audio.play_sample("hurt.wav");
+          explosions_.emplace_back(enemy.x(), enemy.y());
+          enemy.kill();
+        }
+      }
     }
+
     for (auto& explosion : explosions_) explosion.update(elapsed);
 
     for (auto& powerup : powerups_) {
@@ -77,6 +94,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     // spawn enemy waves
     if (enemy_timer_ < 0) {
+      // TODO better enemy progression
       std::uniform_int_distribution<int> tdist(0, 3);
       std::uniform_int_distribution<int> xdist(8, 176);
       std::uniform_int_distribution<int> ydist(8, 96);
@@ -167,6 +185,12 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     } else {
       if (!handle_menu(input, audio)) return false;
     }
+  } else if (state_ == GameState::Defeat) {
+    state_timer_ += elapsed;
+
+    if (state_timer_ > 1500) {
+      if (!handle_menu(input, audio)) return false;
+    }
   }
 
   return true;
@@ -188,13 +212,6 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   const int m = timer_ / 1000 / 60;
 
   if (state_ != GameState::Paused) puzzle_.draw(graphics, 188, 4);
-
-  if (state_ == GameState::Playing) {
-    const int wt = player_.weapon_timer();
-    if (wt > 0) {
-      text_.draw(graphics, std::to_string(wt), 92, 224, Text::Alignment::Center);
-    }
-  }
 
   std::ostringstream timer;
   timer << m << ":" << std::setw(2) << std::setfill('0') << s;
@@ -219,6 +236,16 @@ void PuzzleScreen::draw(Graphics& graphics) const {
 
   gui_.draw(graphics, 6, 184, 66);
   gui_.draw(graphics, 8, 248, 66);
+
+  Bar health_bar = Bar(Bar::Color::Red, 8, 72);
+  Bar weapon_bar = Bar(Bar::Color::Green, 10000, 72);
+  Bar shield_bar = Bar(Bar::Color::Blue, 4, 72);
+  Bar boost_bar = Bar(Bar::Color::Yellow, 64, 72);
+
+  health_bar.draw(graphics, 184, 96, player_.health());
+  weapon_bar.draw(graphics, 184, 104, player_.weapon_timer());
+  shield_bar.draw(graphics, 184, 112, 0);
+  boost_bar.draw(graphics, 184, 120, 0);
 
   if (state_ == GameState::Paused) {
     if ((state_timer_ / 500) % 2 == 0) {
@@ -245,8 +272,15 @@ void PuzzleScreen::draw(Graphics& graphics) const {
 
   if (state_ == GameState::Defeat) {
     SDL_Rect r = { 0, 0, 184, 240 };
-    int red = Util::clamp(state_timer_ / 10, 0, 196);
-    graphics.draw_rect(&r, 0xdd222200 + red, true);
+    int fade = Util::clamp(state_timer_ / 10, 0, 196);
+    graphics.draw_rect(&r, 0x22000000 + fade, true);
+
+    if (state_timer_ > 1500) {
+      panel_.draw(graphics, 1, 28, 58);
+      text_.draw(graphics, "Retry", 92, 136, Text::Alignment::Center);
+      text_.draw(graphics, "Main Menu", 92, 152, Text::Alignment::Center);
+      text_.draw(graphics, ">           <", 92, 136 + 16 * choice_, Text::Alignment::Center);
+    }
   }
 }
 

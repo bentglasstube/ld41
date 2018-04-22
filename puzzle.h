@@ -15,6 +15,7 @@ class Puzzle {
 
     void shuffle(Difficulty diff);
     bool move(Direction dir);
+    void random_move(size_t count = 1);
     bool solved() const;
     void draw(Graphics& graphics, int x, int y) const;
 

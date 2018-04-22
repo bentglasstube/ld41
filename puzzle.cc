@@ -14,15 +14,7 @@ void Puzzle::shuffle(Difficulty diff) {
     pieces_[i] = i;
   }
 
-  std::mt19937 rand;
-  std::uniform_int_distribution<int> dist(0, 3);
-
-  rand.seed(Util::random_seed());
-
-  for (size_t i = 0; i < 4096; ++i) {
-    move(static_cast<Puzzle::Direction>(dist(rand)));
-  }
-
+  random_move(4096);
   difficulty_ = diff;
 }
 
@@ -59,6 +51,18 @@ bool Puzzle::move(Puzzle::Direction dir) {
   }
 
   return true;
+}
+
+void Puzzle::random_move(size_t count) {
+  std::mt19937 rand;
+  std::uniform_int_distribution<int> dist(0, 3);
+
+  rand.seed(Util::random_seed());
+
+  for (size_t i = 0; i < count; ++i) {
+    move(static_cast<Puzzle::Direction>(dist(rand)));
+  }
+
 }
 
 bool Puzzle::solved() const {
