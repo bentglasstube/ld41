@@ -47,7 +47,7 @@ class PuzzleScreen : public Screen {
     std::vector<Enemy> fireballs_;
 
     int timer_, state_timer_, enemy_timer_;
-    int bgoffset_, choice_;
+    int flash_timer_, bgoffset_, choice_;
 
     bool collision(const Object& a, const Object& b, double r) const;
 

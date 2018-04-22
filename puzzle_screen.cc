@@ -15,7 +15,7 @@ PuzzleScreen::PuzzleScreen() :
   text_("text.png"),
   state_(GameState::Playing),
   timer_(0), state_timer_(0), enemy_timer_(1500),
-  bgoffset_(0), choice_(0)
+  flash_timer_(0), bgoffset_(0), choice_(0)
 {
   rand_.seed(Util::random_seed());
 }
@@ -25,6 +25,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
     timer_ += elapsed;
     enemy_timer_ -= elapsed;
     bgoffset_ -= elapsed;
+    if (flash_timer_ > 0) flash_timer_ -= elapsed;
 
     int tx = 0, ty = 0;
     if (input.key_held(Input::Button::Left)) --tx;
@@ -146,6 +147,15 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
             audio.play_sample("powerup.wav");
             break;
 
+          case Powerup::Type::B:
+            for (auto& enemy : enemies_) {
+              explosions_.emplace_back(enemy.x(), enemy.y());
+              enemy.kill();
+            }
+            audio.play_sample("powerup.wav");
+            flash_timer_ = 250;
+            break;
+
           default:
             break;
         }
@@ -216,7 +226,6 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 void PuzzleScreen::draw(Graphics& graphics) const {
   bg_.draw(graphics, 0, bgoffset_);
 
-  player_.draw(graphics);
   for (const auto& powerup : powerups_) powerup.draw(graphics);
   for (const auto& bullet : bullets_) bullet->draw(graphics);
   for (const auto& explosion : explosions_) explosion.draw(graphics);
@@ -265,6 +274,15 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   shield_bar.draw(graphics, 184, 112, player_.shield());
   boost_bar.draw(graphics, 184, 120, player_.fuel());
 
+  player_.draw(graphics);
+
+  if (flash_timer_ > 0) {
+    SDL_Rect r = { 0, 0, 184, 240 };
+    const int amt = std::abs(flash_timer_ - 125);
+    const int flash = Util::clamp(2 * (125 - amt), 0, 255);
+    graphics.draw_rect(&r, 0xffffff00 + flash, true);
+  }
+
   if (state_ == GameState::Paused) {
     if ((state_timer_ / 500) % 2 == 0) {
       text_.draw(graphics, "Paused", 92, 112, Text::Alignment::Center);
@@ -273,9 +291,7 @@ void PuzzleScreen::draw(Graphics& graphics) const {
     text_.draw(graphics, "Resume", 92, 136, Text::Alignment::Center);
     text_.draw(graphics, "Main Menu", 92, 152, Text::Alignment::Center);
     text_.draw(graphics, ">           <", 92, 136 + 16 * choice_, Text::Alignment::Center);
-  }
-
-  if (state_ == GameState::Victory) {
+  } else if (state_ == GameState::Victory) {
     SDL_Rect r = { 0, 0, 184, 240 };
     int white = Util::clamp(state_timer_ / 15, 0, 255);
     graphics.draw_rect(&r, 0xffffff00 + white, true);
@@ -286,9 +302,7 @@ void PuzzleScreen::draw(Graphics& graphics) const {
       text_.draw(graphics, "Main Menu", 92, 152, Text::Alignment::Center);
       text_.draw(graphics, ">           <", 92, 136 + 16 * choice_, Text::Alignment::Center);
     }
-  }
-
-  if (state_ == GameState::Defeat) {
+  } else if (state_ == GameState::Defeat) {
     SDL_Rect r = { 0, 0, 184, 240 };
     int fade = Util::clamp(state_timer_ / 10, 0, 196);
     graphics.draw_rect(&r, 0x22000000 + fade, true);
