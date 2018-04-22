@@ -77,7 +77,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
     // spawn enemy waves
     if (enemy_timer_ < 0) {
-      std::uniform_int_distribution<int> tdist(0, 1);
+      std::uniform_int_distribution<int> tdist(0, 2);
       std::uniform_int_distribution<int> xdist(8, 176);
       std::uniform_int_distribution<int> ydist(8, 96);
       enemies_.emplace_back(xdist(rand_), ydist(rand_), static_cast<Enemy::Type>(tdist(rand_)));

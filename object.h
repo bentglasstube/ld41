@@ -11,8 +11,8 @@ class Object {
     virtual bool dead() const = 0;
     virtual void kill() {};
 
-    inline double x() const { return x_; }
-    inline double y() const { return y_; }
+    virtual inline double x() const { return x_; }
+    virtual inline double y() const { return y_; }
 
   protected:
 

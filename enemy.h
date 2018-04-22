@@ -24,6 +24,9 @@ class Enemy : public Object {
 
     inline Type type() const { return type_; };
 
+    double x() const override;
+    double y() const override;
+
   private:
 
     SpriteMap sprites_;
