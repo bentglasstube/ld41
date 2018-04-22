@@ -18,6 +18,8 @@ class Puzzle {
     bool solved() const;
     void draw(Graphics& graphics, int x, int y) const;
 
+    inline Difficulty difficulty() const { return difficulty_; };
+
   private:
 
     SpriteMap tiles_;

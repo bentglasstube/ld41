@@ -26,7 +26,7 @@ cc_binary(
     srcs = ["main.cc"],
     deps = [
         "@libgam//:game",
-        ":title_screen",
+        ":screens",
     ],
 )
 
@@ -83,27 +83,22 @@ cc_library(
 )
 
 cc_library(
-    name = "puzzle_screen",
-    srcs = ["puzzle_screen.cc"],
-    hdrs = ["puzzle_screen.h"],
+    name = "screens",
+    srcs = [
+        "puzzle_screen.cc",
+        "title_screen.cc",
+    ],
+    hdrs = [
+        "puzzle_screen.h",
+        "title_screen.h",
+    ],
     deps = [
         ":objects",
         ":puzzle",
+        "@libgam//:backdrop",
         "@libgam//:parallax_backdrop",
         "@libgam//:screen",
         "@libgam//:spritemap",
-        "@libgam//:text",
-    ],
-)
-
-cc_library(
-    name = "title_screen",
-    srcs = ["title_screen.cc"],
-    hdrs = ["title_screen.h"],
-    deps = [
-        ":puzzle_screen",
-        "@libgam//:backdrop",
-        "@libgam//:screen",
         "@libgam//:text",
     ],
 )

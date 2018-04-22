@@ -5,7 +5,7 @@
 int main(int, char**) {
   Game::Config config;
 
-  config.graphics.title = "ld41";
+  config.graphics.title = "Empty Space";
   config.graphics.width = 256;
   config.graphics.height = 240;
   config.graphics.fullscreen = true;
