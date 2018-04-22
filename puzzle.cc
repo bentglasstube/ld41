@@ -74,7 +74,7 @@ void Puzzle::draw(Graphics& graphics, int x, int y) const {
     const int xx = (i % 4) * 16 + x;
     const int yy = (i / 4) * 16 + y;
 
-    const int n = (pieces_[i] == 15 && !s) ? 0 : pieces_[i] + 4;
+    const int n = (pieces_[i] == 15 && !s) ? 0 : pieces_[i] + 20;
     tiles_.draw(graphics, n, xx, yy);
   }
 
