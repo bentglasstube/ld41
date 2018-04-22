@@ -65,16 +65,9 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
       }
 
       if (state_ == GameState::Playing && collision(player_, enemy, 12)) {
-        player_.hurt();
-        if (player_.dead()) {
-          audio.play_sample("dead.wav");
-          explosions_.emplace_back(player_.x(), player_.y());
-          lose(audio);
-        } else {
-          audio.play_sample("hurt.wav");
-          explosions_.emplace_back(enemy.x(), enemy.y());
-          enemy.kill();
-        }
+        player_.hurt(audio);
+        explosions_.emplace_back(enemy.x(), enemy.y());
+        enemy.kill();
       }
     }
 
@@ -83,13 +76,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
       fireball.update(elapsed);
       if (player_.dead()) continue;
       if (collision(fireball, player_, 12)) {
-        player_.hurt();
-        if (player_.dead()) {
-          audio.play_sample("dead.wav");
-          lose(audio);
-        } else {
-          audio.play_sample("hurt.wav");
-        }
+        player_.hurt(audio);
         explosions_.emplace_back(player_.x(), player_.y());
         fireball.kill();
       }
@@ -110,6 +97,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
   }
 
   if (state_ == GameState::Playing) {
+    if (player_.dead()) lose(audio);
 
     if (enemy_timer_ < 0) {
       // TODO better enemy progression
@@ -144,6 +132,11 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
 
           case Powerup::Type::K:
             player_.weapon(Bullet::Type::Laser);
+            audio.play_sample("powerup.wav");
+            break;
+
+          case Powerup::Type::N:
+            player_.get_shield();
             audio.play_sample("powerup.wav");
             break;
 
@@ -258,12 +251,12 @@ void PuzzleScreen::draw(Graphics& graphics) const {
 
   Bar health_bar = Bar(Bar::Color::Red, 8, 72);
   Bar weapon_bar = Bar(Bar::Color::Green, 10000, 72);
-  Bar shield_bar = Bar(Bar::Color::Blue, 4, 72);
+  Bar shield_bar = Bar(Bar::Color::Blue, 30000, 72);
   Bar boost_bar = Bar(Bar::Color::Yellow, 64, 72);
 
   health_bar.draw(graphics, 184, 96, player_.health());
   weapon_bar.draw(graphics, 184, 104, player_.weapon_timer());
-  shield_bar.draw(graphics, 184, 112, 0);
+  shield_bar.draw(graphics, 184, 112, player_.shield());
   boost_bar.draw(graphics, 184, 120, 0);
 
   if (state_ == GameState::Paused) {
