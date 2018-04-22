@@ -5,11 +5,11 @@
 
 #include "util.h"
 
-Puzzle::Puzzle() : tiles_("puzzle.png", 4, 16, 16) {
-  shuffle();
-}
+Puzzle::Puzzle() :
+  tiles_("puzzle.png", 4, 16, 16),
+  difficulty_() {}
 
-void Puzzle::shuffle() {
+void Puzzle::shuffle(Difficulty diff) {
   for (size_t i = 0; i < 16; ++i) {
     pieces_[i] = i;
   }
@@ -22,6 +22,8 @@ void Puzzle::shuffle() {
   for (size_t i = 0; i < 4096; ++i) {
     move(static_cast<Puzzle::Direction>(dist(rand)));
   }
+
+  difficulty_ = diff;
 }
 
 bool Puzzle::move(Puzzle::Direction dir) {
@@ -68,15 +70,12 @@ bool Puzzle::solved() const {
 }
 
 void Puzzle::draw(Graphics& graphics, int x, int y) const {
-  // TODO set difficulty elsewhere
-  const int difficulty = 0;
-
   for (int i = 0; i < 16; ++i) {
     const int xx = (i % 4) * 16 + x;
     const int yy = (i / 4) * 16 + y;
 
     if (pieces_[i] == 15 && !solved()) continue;
-    tiles_.draw(graphics, pieces_[i] + difficulty * 16, xx, yy);
+    tiles_.draw(graphics, pieces_[i] + static_cast<int>(difficulty_) * 16, xx, yy);
 
     if (pieces_[i] == i) tiles_.draw(graphics, 48, xx, yy);
   }

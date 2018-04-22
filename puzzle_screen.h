@@ -23,6 +23,7 @@ class PuzzleScreen : public Screen {
     void draw(Graphics& graphics) const override;
 
     Screen* next_screen() const override;
+    void reset(Puzzle::Difficulty diff);
 
   private:
 
@@ -39,6 +40,5 @@ class PuzzleScreen : public Screen {
 
     int timer_;
 
-    void reset();
     bool collision(const Object& a, const Object& b, double r) const;
 };

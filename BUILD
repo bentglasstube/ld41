@@ -102,6 +102,7 @@ cc_library(
     hdrs = ["title_screen.h"],
     deps = [
         ":puzzle_screen",
+        "@libgam//:backdrop",
         "@libgam//:screen",
         "@libgam//:text",
     ],

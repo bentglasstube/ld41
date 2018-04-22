@@ -12,7 +12,6 @@ PuzzleScreen::PuzzleScreen() :
   text_("text.png")
 {
   rand_.seed(Util::random_seed());
-  reset();
 }
 
 bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed) {
@@ -161,9 +160,10 @@ Screen* PuzzleScreen::next_screen() const {
   return nullptr;
 }
 
-void PuzzleScreen::reset() {
+void PuzzleScreen::reset(Puzzle::Difficulty diff) {
+  fprintf(stderr, "Doing puzzle with difficulty %d\n", diff);
   timer_ = 0;
-  puzzle_.shuffle();
+  puzzle_.shuffle(diff);
 }
 
 bool PuzzleScreen::collision(const Object& a, const Object& b, double r) const {
