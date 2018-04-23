@@ -35,12 +35,12 @@ bool TitleScreen::update(const Input& input, Audio& audio, unsigned int elapsed)
 void TitleScreen::draw(Graphics& graphics) const {
   bg_.draw(graphics);
 
-  text_.draw(graphics, "Casual", 128, 128, Text::Alignment::Center);
-  text_.draw(graphics, "Hardcore", 128, 144, Text::Alignment::Center);
-  text_.draw(graphics, "Good Luck, Fucker", 128, 160, Text::Alignment::Center);
+  text_.draw(graphics, "Easy", 128, 128, Text::Alignment::Center);
+  text_.draw(graphics, "Sleazy", 128, 144, Text::Alignment::Center);
+  text_.draw(graphics, "Queasy", 128, 160, Text::Alignment::Center);
   text_.draw(graphics, "Quit", 128, 176, Text::Alignment::Center);
 
-  text_.draw(graphics, ">                   <", 128, 128 + choice_ * 16, Text::Alignment::Center);
+  text_.draw(graphics, ">       <", 128, 128 + choice_ * 16, Text::Alignment::Center);
 }
 
 Screen* TitleScreen::next_screen() const {
