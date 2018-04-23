@@ -10,7 +10,7 @@
 
 PuzzleScreen::PuzzleScreen() :
   gui_("gui.png", 3, 8, 8),
-  panel_("panel.png", 2, 128, 128),
+  panel_("panel.png", 2, 48, 64),
   bg_("starfield.png", 256, 2048, 8),
   text_("text.png"),
   state_(GameState::Playing),
@@ -22,6 +22,8 @@ PuzzleScreen::PuzzleScreen() :
 
 bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed) {
   if (state_ == GameState::Playing) {
+    if (!audio.music_playing()) audio.play_music("spaceloop.ogg");
+
     timer_ += elapsed;
     enemy_timer_ -= elapsed;
     bgoffset_ -= elapsed;
@@ -108,7 +110,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
       std::uniform_int_distribution<int> ydist(8, 96);
       enemies_.emplace_back(xdist(rand_), ydist(rand_), static_cast<Enemy::Type>(tdist(rand_)), player_);
 
-      enemy_timer_ += std::max(3000 - timer_ / 100, 500);
+      enemy_timer_ += std::max(3000 - timer_ / 250, 1000);
     }
 
     for (auto& powerup : powerups_) {
@@ -264,13 +266,13 @@ void PuzzleScreen::draw(Graphics& graphics) const {
   gui_.draw(graphics, 6, 184, 66);
   gui_.draw(graphics, 8, 248, 66);
 
-  Bar health_bar = Bar(Bar::Color::Red, 8, 72);
-  Bar weapon_bar = Bar(Bar::Color::Green, 10000, 72);
+  Bar health_bar = Bar(Bar::Color::Red, 16, 72);
+  Bar weapon_bar = Bar(Bar::Color::Green, 25, 72);
   Bar shield_bar = Bar(Bar::Color::Blue, 30000, 72);
-  Bar boost_bar = Bar(Bar::Color::Yellow, 10000, 72);
+  Bar boost_bar = Bar(Bar::Color::Yellow, 5000, 72);
 
   health_bar.draw(graphics, 184, 96, player_.health());
-  weapon_bar.draw(graphics, 184, 104, player_.weapon_timer());
+  weapon_bar.draw(graphics, 184, 104, player_.weapon_shots());
   shield_bar.draw(graphics, 184, 112, player_.shield());
   boost_bar.draw(graphics, 184, 120, player_.fuel());
 
@@ -297,7 +299,7 @@ void PuzzleScreen::draw(Graphics& graphics) const {
     graphics.draw_rect(&r, 0xffffff00 + white, true);
 
     if (state_timer_ >= 5000) {
-      panel_.draw(graphics, 0, 28, 58);
+      panel_.draw(graphics, 0, 68, 58);
       text_.draw(graphics, "Retry", 92, 136, Text::Alignment::Center);
       text_.draw(graphics, "Main Menu", 92, 152, Text::Alignment::Center);
       text_.draw(graphics, ">           <", 92, 136 + 16 * choice_, Text::Alignment::Center);
@@ -308,7 +310,7 @@ void PuzzleScreen::draw(Graphics& graphics) const {
     graphics.draw_rect(&r, 0x22000000 + fade, true);
 
     if (state_timer_ > 1500) {
-      panel_.draw(graphics, 1, 28, 58);
+      panel_.draw(graphics, 1, 68, 58);
       text_.draw(graphics, "Retry", 92, 136, Text::Alignment::Center);
       text_.draw(graphics, "Main Menu", 92, 152, Text::Alignment::Center);
       text_.draw(graphics, ">           <", 92, 136 + 16 * choice_, Text::Alignment::Center);
@@ -343,6 +345,7 @@ void PuzzleScreen::pause(Audio& audio) {
     state_timer_ = 0;
     choice_ = 0;
     audio.play_sample("pause.wav");
+    audio.music_volume(3);
   }
 }
 
@@ -350,6 +353,7 @@ void PuzzleScreen::resume(Audio& audio) {
   if (state_ == GameState::Paused) {
     state_ = GameState::Playing;
     audio.play_sample("pause.wav");
+    audio.music_volume(10);
   }
 }
 

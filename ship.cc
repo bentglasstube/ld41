@@ -6,8 +6,8 @@
 
 Ship::Ship() :
   Object(92, 224), sprites_("ships.png", 4, 16, 16),
-  weapon_(Bullet::Type::Bullet), weapon_timer_(0),
-  health_(8), shield_(0), fuel_(5000) {}
+  weapon_(Bullet::Type::Bullet), weapon_shots_(0),
+  health_(16), shield_(0), fuel_(2500) {}
 
 void Ship::thrust(double vx, double vy, bool boost) {
   vx_ = vx;
@@ -16,8 +16,7 @@ void Ship::thrust(double vx, double vy, bool boost) {
 }
 
 void Ship::weapon(Bullet::Type weapon) {
-  weapon_ = weapon;
-  weapon_timer_ = 10000;
+  weapon_shots_ = 25;
 }
 
 void Ship::get_shield() {
@@ -25,12 +24,13 @@ void Ship::get_shield() {
 }
 
 void Ship::get_fuel() {
-  fuel_ += 1000;
-  if (fuel_ > 10000) fuel_ = 10000;
+  fuel_ = std::min(fuel_ + 500, 5000);
 }
 
-Bullet* Ship::fire() const {
-  return std::move(new Bullet(x_, y_ - 4, weapon_));
+Bullet* Ship::fire() {
+  Bullet* b = new Bullet(x_, y_ - 4, weapon_shots_ > 0 ? Bullet::Type::Laser : Bullet::Type::Bullet);
+  --weapon_shots_;
+  return std::move(b);
 }
 
 void Ship::hurt(Audio& audio) {
@@ -44,17 +44,9 @@ void Ship::hurt(Audio& audio) {
 }
 
 void Ship::update(unsigned int elapsed) {
-  const double s = kSpeed * (boosting() ? 1.5 : 1);
+  const double s = kSpeed * (boosting() ? 2.5 : 1);
   x_ = Util::clamp(x_ + elapsed * vx_ * s, 8.0, 176.0);
   y_ = Util::clamp(y_ + elapsed * vy_ * s, 8.0, 232.0);
-
-  if (weapon_timer_ > 0) {
-    weapon_timer_ -= elapsed;
-    if (weapon_timer_ <= 0) {
-      weapon_ = Bullet::Type::Bullet;
-      weapon_timer_ = 0;
-    }
-  }
 
   if (boosting()) {
    fuel_ -= elapsed;

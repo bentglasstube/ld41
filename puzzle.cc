@@ -14,7 +14,7 @@ void Puzzle::shuffle(Difficulty diff) {
     pieces_[i] = i;
   }
 
-  random_move(4096);
+  random_move(256);
   difficulty_ = diff;
 }
 

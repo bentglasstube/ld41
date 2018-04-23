@@ -11,8 +11,17 @@ Powerup::Powerup(double x, double y) : Object(x, y), sprites_("powerups.png", 4,
   std::uniform_real_distribution<double> vydist(0.04, 0.09);
   vy_ = vydist(rand);
 
-  std::uniform_int_distribution<int> tdist(0, 3);
-  type_ = static_cast<Type>(tdist(rand) + (tdist(rand) == 0 ? 4 : 0));
+  std::uniform_int_distribution<int> tdist(0, 100);
+  const int r = tdist(rand);
+  if (r < 50) {
+    std::uniform_int_distribution<int> ddist(0, 3);
+    type_ = static_cast<Type>(ddist(rand));
+  } else if (r < 75) {
+    type_ = Type::K;
+  } else {
+    std::uniform_int_distribution<int> odist(5, 7);
+    type_ = static_cast<Type>(odist(rand));
+  }
 }
 
 void Powerup::update(unsigned int elapased) {
