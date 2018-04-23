@@ -6,8 +6,7 @@
 
 Ship::Ship() :
   Object(92, 224), sprites_("ships.png", 4, 16, 16),
-  weapon_(Bullet::Type::Bullet), weapon_shots_(0),
-  health_(16), shield_(0), fuel_(2500) {}
+  weapon_shots_(0), health_(16), shield_(0), fuel_(2500) {}
 
 void Ship::thrust(double vx, double vy, bool boost) {
   vx_ = vx;
@@ -15,7 +14,7 @@ void Ship::thrust(double vx, double vy, bool boost) {
   boosting_ = boost;
 }
 
-void Ship::weapon(Bullet::Type weapon) {
+void Ship::weapon() {
   weapon_shots_ = 25;
 }
 

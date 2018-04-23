@@ -74,7 +74,7 @@ bool Puzzle::solved() const {
 }
 
 void Puzzle::draw(Graphics& graphics, int x, int y) const {
-  for (int i = 0; i < 16; ++i) {
+  for (size_t i = 0; i < 16; ++i) {
     const int xx = (i % 4) * 16 + x;
     const int yy = (i / 4) * 16 + y;
 

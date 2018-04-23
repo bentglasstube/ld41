@@ -16,7 +16,7 @@ class Ship : public Object {
     Ship();
 
     void thrust(double vx, double vy, bool boost);
-    void weapon(Bullet::Type weapon);
+    void weapon();
     void get_shield();
     void get_fuel();
     Bullet* fire();
@@ -35,7 +35,6 @@ class Ship : public Object {
 
     SpriteMap sprites_;
     double vx_, vy_;
-    Bullet::Type weapon_;
     int weapon_shots_;
     int health_, shield_, fuel_;
     bool boosting_;

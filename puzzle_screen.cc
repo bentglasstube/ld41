@@ -135,7 +135,7 @@ bool PuzzleScreen::update(const Input& input, Audio& audio, unsigned int elapsed
             break;
 
           case Powerup::Type::K:
-            player_.weapon(Bullet::Type::Laser);
+            player_.weapon();
             audio.play_sample("powerup.wav");
             break;
 

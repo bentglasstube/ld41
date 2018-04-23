@@ -17,7 +17,7 @@ class Powerup : public Object {
     inline bool dead() const override { return y_ > 250; };
 
     inline Type type() const { return type_; };
-    void kill();
+    void kill() override;
     bool rotate();
 
   private:
